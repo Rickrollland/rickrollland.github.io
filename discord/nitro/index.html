@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord - Cadeau Nitro</title>
+    <style>
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #36393f; /* Couleur exacte de Discord */
+            font-family: 'Whitney', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden;
+        }
+
+        /* Design de la carte Nitro */
+        #nitro-card {
+            background-color: #2f3136;
+            width: 440px;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            text-align: left;
+            border: 1px solid #202225;
+            z-index: 10;
+        }
+
+        .nitro-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .nitro-logo {
+            width: 45px;
+            height: 45px;
+            margin-right: 15px;
+        }
+
+        .nitro-text h2 {
+            color: #fff;
+            font-size: 16px;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .gift-title {
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 15px 0 10px 0;
+        }
+
+        .gift-desc {
+            color: #b9bbbe;
+            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 25px;
+        }
+
+        .btn-claim {
+            background-color: #3ba55d; /* Vert Discord */
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 3px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+
+        .btn-claim:hover {
+            background-color: #2d7d46;
+        }
+
+        /* Overlay vidéo (Caché au début) */
+        #video-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 9999;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- L'appât Discord Nitro -->
+    <div id="nitro-card">
+        <div class="nitro-header">
+            <img src="https://i.imgur.com/v9E96I0.png" class="nitro-logo" alt="Nitro">
+            <div class="nitro-text">
+                <h2>Vous avez reçu un cadeau !</h2>
+            </div>
+        </div>
+        
+        <div class="gift-title">3 Mois de Discord Nitro</div>
+        <div class="gift-desc">
+            Un utilisateur vous a envoyé un abonnement Nitro. Pour l'ajouter à votre compte, cliquez sur le bouton "Récupérer" ci-dessous. 
+            <br><br>
+            <small>Expire dans : 23 heures, 59 minutes</small>
+        </div>
+        
+        <button class="btn-claim" onclick="startPrank()">Récupérer</button>
+    </div>
+
+    <!-- Le Rickroll -->
+    <div id="video-overlay">
+        <video id="rick-video" playsinline loop>
+            <source src="https://files.catbox.moe/rznoer.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <script>
+        function startPrank() {
+            const card = document.getElementById('nitro-card');
+            const overlay = document.getElementById('video-overlay');
+            const video = document.getElementById('rick-video');
+
+            // 1. Cacher la fausse interface Nitro
+            card.style.display = 'none';
+            
+            // 2. Afficher la vidéo
+            overlay.style.display = 'block';
+
+            // 3. Lancer la vidéo avec le son (autorisé car l'utilisateur a cliqué)
+            video.play();
+
+            // 4. Forcer le plein écran
+            if (overlay.requestFullscreen) {
+                overlay.requestFullscreen();
+            } else if (overlay.webkitRequestFullscreen) {
+                overlay.webkitRequestFullscreen(); // Safari / iOS
+            } else if (video.webkitEnterFullscreen) {
+                video.webkitEnterFullscreen(); // iPhone
+            }
+
+            // 5. Empêcher de mettre en pause pour troller au maximum
+            video.onpause = function() {
+                video.play();
+            };
+        }
+    </script>
+</body>
+</html>
