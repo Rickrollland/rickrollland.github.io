@@ -28,6 +28,10 @@
         background-color: var(--bg);
         color: var(--text);
         overflow-x: hidden;
+    }
+
+    /* Le wrapper qui tourne sans casser les éléments position: fixed */
+    #page-wrapper {
         transition: transform 0.2s ease-out;
         transform: rotate(var(--tilt));
         transform-origin: center top;
@@ -36,8 +40,10 @@
 
     /* Bandeau d'affichage géant du mot de passe */
     #password-billboard {
-        position: sticky;
+        position: fixed;
         top: 0;
+        left: 0;
+        right: 0;
         z-index: 9000;
         background: #111;
         color: #00ff66;
@@ -70,6 +76,8 @@
         align-items: center;
         box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         position: relative;
+        flex-wrap: wrap;
+        gap: 15px;
     }
 
     .marianne-box {
@@ -118,7 +126,7 @@
 
     /* Conteneur Principal */
     .container {
-        max-width: 780px;
+        max-width: 760px;
         margin: 40px auto;
         padding: 0 20px;
     }
@@ -246,7 +254,7 @@
         background: #f0f4ff;
     }
 
-    /* Frein à main de scroll (Fixe à droite) */
+    /* Frein à main de scroll (Fixe à droite de l'écran) */
     .handbrake-panel {
         position: fixed;
         right: 20px;
@@ -256,7 +264,7 @@
         color: #fff;
         padding: 15px;
         border-radius: 12px;
-        width: 150px;
+        width: 155px;
         text-align: center;
         box-shadow: 0 10px 25px rgba(0,0,0,0.25);
         z-index: 8000;
@@ -274,12 +282,12 @@
     }
 
     .lever-handle {
-        width: 80%;
+        width: 84%;
         height: 28px;
         background: var(--red);
         border-radius: 6px;
         position: absolute;
-        left: 10%;
+        left: 8%;
         top: 8px;
         transition: top 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
         display: flex;
@@ -415,10 +423,13 @@
         margin-bottom: 4px;
     }
 
-    /* Cookie Banner infernal */
+    /* Cookie Banner infernal (Bien fixé sur la fenêtre) */
     #cookie-modal {
         position: fixed;
-        inset: 0;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
         background: rgba(0,0,0,0.65);
         z-index: 9999;
         display: flex;
@@ -495,7 +506,10 @@
     /* Modal finale de file d'attente */
     #queue-modal {
         position: fixed;
-        inset: 0;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
         background: rgba(0, 0, 80, 0.9);
         color: #fff;
         z-index: 10000;
@@ -532,30 +546,172 @@
     👁️ ASSISTANCE VISUELLE ANTI-FAUTES DE FRAPPE — VOTRE MOT DE PASSE ACTUEL EST : <span id="billboard-text"></span>
 </div>
 
-<!-- Header Administratif -->
-<header>
-    <div class="marianne-box">
-        <div class="flag"></div>
-        <div>
-            <div class="gov-title">République du Clic<br>Ministère du Temps Perdu</div>
-            <div class="gov-sub">Formulaire Cerfa n°404-B — Homologation d'Utilisateur</div>
-        </div>
-    </div>
+<!-- Conteneur principal soumis à l'inclinaison -->
+<div id="page-wrapper">
 
-    <div class="control-bar">
-        <div class="control-item" title="Ajuste le volume sonore de la page">
-            <span>🔊 Volume :</span>
-            <input type="range" id="volume-slider" min="-8" max="8" value="0" step="1" style="width: 90px;">
-            <span id="volume-label">0°</span>
+    <!-- Header Administratif -->
+    <header>
+        <div class="marianne-box">
+            <div class="flag"></div>
+            <div>
+                <div class="gov-title">République du Clic<br>Ministère du Temps Perdu</div>
+                <div class="gov-sub">Formulaire Cerfa n°404-B — Homologation d'Utilisateur</div>
+            </div>
         </div>
-        <div class="control-item">
-            <button class="secondary" id="mute-btn" onclick="toggleAudio()">🔔 Son : Activé</button>
+
+        <div class="control-bar">
+            <div class="control-item" title="Ajuste le volume sonore de la page">
+                <span>🔊 Volume :</span>
+                <input type="range" id="volume-slider" min="-8" max="8" value="0" step="1" style="width: 90px;">
+                <span id="volume-label">0°</span>
+            </div>
+            <div class="control-item">
+                <button class="secondary" id="mute-btn" onclick="toggleAudio()">🔔 Son : Activé</button>
+            </div>
+            <div class="control-item">
+                <span>Clics restants : <strong id="click-quota">25</strong></span>
+            </div>
         </div>
-        <div class="control-item">
-            <span>Clics restants : <strong id="click-quota">25</strong></span>
+    </header>
+
+    <!-- Contenu Principal -->
+    <div class="container">
+
+        <div class="alert-slope">
+            <div>
+                <strong>⚠️ Attention :</strong> Cette page web est hébergée sur un serveur en pente (inclinaison de 14%). Si vous desserrez le frein à main (à droite) sans mettre de cale, la page remontera toute seule.
+            </div>
         </div>
+
+        <!-- SECTION 1 : IDENTITÉ & ENCRE -->
+        <div class="card">
+            <h2>1. Déclaration d'Identité <span class="badge">Encre Certifiée</span></h2>
+            <div class="form-group">
+                <label for="name-input">Nom et Prénom (Attention à la pression d'encre du clavier) :</label>
+                <input type="text" id="name-input" placeholder="Tapez votre nom ici..." autocomplete="off">
+                
+                <div class="ink-bar-container">
+                    <span style="font-size: 12px; font-weight: bold;">🖨️ Niveau de toner :</span>
+                    <div class="ink-meter">
+                        <div class="ink-fill" id="ink-fill"></div>
+                    </div>
+                    <button type="button" onclick="pumpInk()">Pomper de l'encre ⛽</button>
+                </div>
+            </div>
+
+            <div class="form-group" style="display:flex; gap:15px; align-items:center; font-size:13px; flex-wrap:wrap;">
+                <label style="margin:0; cursor:pointer;">
+                    <input type="checkbox" id="autocorrect-cb" checked onchange="toggleAutocorrect(this)">
+                    Activer l'Amélioration Créative des Prénoms par IA
+                </label>
+                <label style="margin:0; cursor:pointer;">
+                    <input type="checkbox" id="anarchy-keys">
+                    Clavier en mode "Lendemain de soirée"
+                </label>
+            </div>
+        </div>
+
+        <!-- SECTION 2 : DATE DE NAISSANCE ALPHABÉTIQUE -->
+        <div class="card">
+            <h2>2. Millésime de Naissance <span class="badge">Tri Optimisé</span></h2>
+            <div class="form-group">
+                <label for="birth-year">Sélectionnez votre année de naissance (triée par ordre alphabétique strict pour plus d'équité) :</label>
+                <select id="birth-year" onchange="onYearChange(this)">
+                    <option value="">-- Veuillez chercher patiemment --</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- SECTION 3 : TÉLÉPHONE ÉOLIEN -->
+        <div class="card">
+            <h2>3. Coordonnées Téléphoniques <span class="badge">Météo Sensible</span></h2>
+            <div class="wind-box">
+                <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:8px;">
+                    <span>🌬️ <strong>Météo du formulaire :</strong> Vent d'Ouest (Force 4)</span>
+                    <span id="window-status" style="color:var(--red); font-weight:bold;">🪟 Fenêtre ouverte (Courant d'air !)</span>
+                </div>
+                <div class="phone-display" id="phone-display">06 12 34 56 78</div>
+                <input type="range" id="phone-slider" min="600000000" max="799999999" value="612345678" style="width:100%;" oninput="updatePhoneFromSlider()">
+                
+                <div style="display:flex; gap:10px; margin-top:10px; justify-content:center; flex-wrap:wrap;">
+                    <button type="button" class="secondary" onclick="blowOnPhone(-15432)">💨 Souffler à gauche</button>
+                    <button type="button" class="secondary" onclick="blowOnPhone(15432)">💨 Souffler à droite</button>
+                    <button type="button" id="window-btn" onclick="toggleWindow()">Fermer la fenêtre 🪟</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4 : MOT DE PASSE PARANOÏAQUE -->
+        <div class="card">
+            <h2>4. Sécurité Quantique <span class="badge">RGPD++</span></h2>
+            <div class="form-group">
+                <label for="pwd-input">Créez un mot de passe conforme aux exigences lunaires :</label>
+                <input type="password" id="pwd-input" placeholder="Mot de passe ultra-secret..." oninput="checkPassword(this.value)">
+                <ul class="rules-list" style="margin-top:10px; padding-left:20px;">
+                    <li id="rule-1" class="invalid">Doit contenir au moins une voyelle criée très fort (MAJUSCULE).</li>
+                    <li id="rule-2" class="invalid">Doit contenir le mot "MOUTARDE" ou un synonyme d'angoisse.</li>
+                    <li id="rule-3" class="invalid">Doit contenir un signe de ponctuation passif-agressif ("..." ou "!").</li>
+                    <li id="rule-4" class="invalid">La longueur du mot de passe doit être un nombre impair (actuel : <span id="pwd-len">0</span>).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SECTION 5 : CAPTCHA PSYCHOLOGIQUE -->
+        <div class="card">
+            <h2>5. Vérification d'Humanité <span class="badge">Test de Turing Émotionnel</span></h2>
+            <p style="font-size:14px; margin-top:0;">
+                Prouvez que vous n'êtes pas un robot : <strong>Cliquez uniquement sur les éléments qui manquent cruellement de confiance en eux.</strong>
+            </p>
+            <div class="captcha-grid">
+                <div class="captcha-cell" onclick="selectCaptcha(this, false)">😎<span>Sûr de lui</span></div>
+                <div class="captcha-cell nervous" onclick="selectCaptcha(this, true)">😰<span>Tremble au survol</span></div>
+                <div class="captcha-cell" onclick="selectCaptcha(this, false)">🗿<span>Impassible</span></div>
+                <div class="captcha-cell" onclick="selectCaptcha(this, false)">🚀<span>Ambitieux</span></div>
+                <div class="captcha-cell nervous" onclick="selectCaptcha(this, true)">🥺<span>Regard fuyant</span></div>
+                <div class="captcha-cell" id="fleeing-captcha" onmouseenter="fleeCaptcha(this)" onclick="selectCaptcha(this, true)">🏃<span>Phobie des souris</span></div>
+            </div>
+        </div>
+
+        <!-- SECTION 6 : CGU & SOUMISSION -->
+        <div class="card">
+            <h2>6. Consentement Mutuel & Validation <span class="badge">Étape Finale</span></h2>
+            <div class="form-group" style="font-size:14px; line-height:1.8;">
+                <label style="cursor:pointer;">
+                    <input type="checkbox" id="cgu-1" onchange="handleCguTriangle(1)">
+                    J'ai lu, compris et appris par cœur les 4 820 pages des Conditions Générales.
+                </label>
+                <label style="cursor:pointer;">
+                    <input type="checkbox" id="cgu-2" onchange="handleCguTriangle(2)">
+                    Je certifie sur l'honneur ne pas avoir menti à la case précédente.
+                </label>
+                <label style="cursor:pointer;">
+                    <input type="checkbox" id="cgu-3" onchange="handleCguTriangle(3)">
+                    J'accepte de recevoir des fax publicitaires à 3h du matin.
+                </label>
+            </div>
+
+            <div id="lie-detector" style="display:none; background:#ffe3e3; color:var(--red); padding:10px; border-radius:6px; font-size:13px; margin-bottom:15px; font-weight:bold;">
+                🚨 Détecteur de mensonge : Vous avez coché la case 1 sans lire les CGU (temps passé : 0.0 seconde).
+            </div>
+
+            <div style="position:relative; height:70px; display:flex; align-items:center; justify-content:center; border-top:1px solid #eee; padding-top:15px;">
+                <button type="button" id="submit-btn" 
+                    onmouseenter="evadeSubmit(this)" 
+                    onmousedown="startGentleClick(event)" 
+                    onmouseup="endGentleClick(event)"
+                    style="padding: 14px 28px; font-size: 16px; position:relative;">
+                    Envoyer mon dossier administratif 📨
+                </button>
+            </div>
+            <div id="click-force-msg" style="text-align:center; font-size:12px; color:#666; margin-top:5px;">
+                Astuce : Le bouton est timide, caressez-le en maintenant le clic entre 0.8 et 2.2 secondes.
+            </div>
+        </div>
+
     </div>
-</header>
+</div>
+
+<!-- ÉLÉMENTS FIXES (En dehors de #page-wrapper pour rester attachés à l'écran) -->
 
 <!-- Frein à main de défilement -->
 <div class="handbrake-panel">
@@ -569,148 +725,12 @@
     </button>
 </div>
 
-<!-- Contenu Principal -->
-<div class="container">
-
-    <div class="alert-slope">
-        <div>
-            <strong>⚠️ Attention :</strong> Cette page web est hébergée sur un serveur en pente (inclinaison de 14%). Si vous desserrez le frein à main sans mettre de cale, la page remontera toute seule.
-        </div>
-    </div>
-
-    <!-- SECTION 1 : IDENTITÉ & ENCRE -->
-    <div class="card">
-        <h2>1. Déclaration d'Identité <span class="badge">Encre Certifiée</span></h2>
-        <div class="form-group">
-            <label for="name-input">Nom et Prénom (Attention à la pression d'encre du clavier) :</label>
-            <input type="text" id="name-input" placeholder="Tapez votre nom ici..." autocomplete="off">
-            
-            <div class="ink-bar-container">
-                <span style="font-size: 12px; font-weight: bold;">🖨️ Niveau de toner :</span>
-                <div class="ink-meter">
-                    <div class="ink-fill" id="ink-fill"></div>
-                </div>
-                <button type="button" onclick="pumpInk()">Pomper de l'encre ⛽</button>
-            </div>
-        </div>
-
-        <div class="form-group" style="display:flex; gap:15px; align-items:center; font-size:13px;">
-            <label style="margin:0; cursor:pointer;">
-                <input type="checkbox" id="autocorrect-cb" checked onchange="toggleAutocorrect(this)">
-                Activer l'Amélioration Créative des Prénoms par IA
-            </label>
-            <label style="margin:0; cursor:pointer;">
-                <input type="checkbox" id=" anarchy-keys">
-                Clavier en mode "Lendemain de soirée"
-            </label>
-        </div>
-    </div>
-
-    <!-- SECTION 2 : DATE DE NAISSANCE ALPHABÉTIQUE -->
-    <div class="card">
-        <h2>2. Millésime de Naissance <span class="badge">Tri Optimisé</span></h2>
-        <div class="form-group">
-            <label for="birth-year">Sélectionnez votre année de naissance (triée par ordre alphabétique strict pour plus d'équité) :</label>
-            <select id="birth-year" onchange="onYearChange(this)">
-                <option value="">-- Veuillez chercher patiemment --</option>
-            </select>
-        </div>
-    </div>
-
-    <!-- SECTION 3 : TÉLÉPHONE ÉOLIEN -->
-    <div class="card">
-        <h2>3. Coordonnées Téléphoniques <span class="badge">Météo Sensible</span></h2>
-        <div class="wind-box">
-            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:8px;">
-                <span>🌬️ <strong>Météo du formulaire :</strong> Vent d'Ouest (Force 4)</span>
-                <span id="window-status" style="color:var(--red); font-weight:bold;">🪟 Fenêtre ouverte (Courant d'air !)</span>
-            </div>
-            <div class="phone-display" id="phone-display">06 12 34 56 78</div>
-            <input type="range" id="phone-slider" min="600000000" max="799999999" value="612345678" style="width:100%;" oninput="updatePhoneFromSlider()">
-            
-            <div style="display:flex; gap:10px; margin-top:10px; justify-content:center;">
-                <button type="button" class="secondary" onclick="blowOnPhone(-15432)">💨 Souffler à gauche</button>
-                <button type="button" class="secondary" onclick="blowOnPhone(15432)">💨 Souffler à droite</button>
-                <button type="button" id="window-btn" onclick="toggleWindow()">Fermer la fenêtre 🪟</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- SECTION 4 : MOT DE PASSE PARANOÏAQUE -->
-    <div class="card">
-        <h2>4. Sécurité Quantique <span class="badge">RGPD++</span></h2>
-        <div class="form-group">
-            <label for="pwd-input">Créez un mot de passe conforme aux exigences lunaires :</label>
-            <input type="password" id="pwd-input" placeholder="Mot de passe ultra-secret..." oninput="checkPassword(this.value)">
-            <ul class="rules-list" style="margin-top:10px; padding-left:20px;">
-                <li id="rule-1" class="invalid">Doit contenir au moins une voyelle criée très fort (MAJUSCULE).</li>
-                <li id="rule-2" class="invalid">Doit contenir le mot "MOUTARDE" ou un synonyme d'angoisse.</li>
-                <li id="rule-3" class="invalid">Doit contenir un signe de ponctuation passif-agressif ("..." ou "!").</li>
-                <li id="rule-4" class="invalid">La longueur du mot de passe doit être un nombre impair (actuel : <span id="pwd-len">0</span>).</li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- SECTION 5 : CAPTCHA PSYCHOLOGIQUE -->
-    <div class="card">
-        <h2>5. Vérification d'Humanité <span class="badge">Test de Turing Émotionnel</span></h2>
-        <p style="font-size:14px; margin-top:0;">
-            Prouvez que vous n'êtes pas un robot : <strong>Cliquez uniquement sur les éléments qui manquent cruellement de confiance en eux.</strong>
-        </p>
-        <div class="captcha-grid">
-            <div class="captcha-cell" onclick="selectCaptcha(this, false)">😎<span>Sûr de lui</span></div>
-            <div class="captcha-cell nervous" onclick="selectCaptcha(this, true)">😰<span>Tremble au survol</span></div>
-            <div class="captcha-cell" onclick="selectCaptcha(this, false)">🗿<span>Impassible</span></div>
-            <div class="captcha-cell" onclick="selectCaptcha(this, false)">🚀<span>Ambitieux</span></div>
-            <div class="captcha-cell nervous" onclick="selectCaptcha(this, true)">🥺<span>Regard fuyant</span></div>
-            <div class="captcha-cell" id="fleeing-captcha" onmouseenter="fleeCaptcha(this)" onclick="selectCaptcha(this, true)">🏃<span>Phobie des souris</span></div>
-        </div>
-    </div>
-
-    <!-- SECTION 6 : CGU & SOUMISSION -->
-    <div class="card">
-        <h2>6. Consentement Mutuel & Validation <span class="badge">Étape Finale</span></h2>
-        <div class="form-group" style="font-size:14px; line-height:1.8;">
-            <label style="cursor:pointer;">
-                <input type="checkbox" id="cgu-1" onchange="handleCguTriangle(1)">
-                J'ai lu, compris et appris par cœur les 4 820 pages des Conditions Générales.
-            </label>
-            <label style="cursor:pointer;">
-                <input type="checkbox" id="cgu-2" onchange="handleCguTriangle(2)">
-                Je certifie sur l'honneur ne pas avoir menti à la case précédente.
-            </label>
-            <label style="cursor:pointer;">
-                <input type="checkbox" id="cgu-3" onchange="handleCguTriangle(3)">
-                J'accepte de recevoir des fax publicitaires à 3h du matin.
-            </label>
-        </div>
-
-        <div id="lie-detector" style="display:none; background:#ffe3e3; color:var(--red); padding:10px; border-radius:6px; font-size:13px; margin-bottom:15px; font-weight:bold;">
-            🚨 Détecteur de mensonge : Vous avez coché la case 1 sans lire les CGU (temps passé : 0.0 seconde).
-        </div>
-
-        <div style="position:relative; height:70px; display:flex; align-items:center; justify-content:center; border-top:1px solid #eee; padding-top:15px;">
-            <button type="button" id="submit-btn" 
-                onmouseenter="evadeSubmit(this)" 
-                onmousedown="startGentleClick(event)" 
-                onmouseup="endGentleClick(event)"
-                style="padding: 14px 28px; font-size: 16px; position:relative;">
-                Envoyer mon dossier administratif 📨
-            </button>
-        </div>
-        <div id="click-force-msg" style="text-align:center; font-size:12px; color:#666; margin-top:5px;">
-            Astuce : Le bouton est timide, caressez-le en maintenant le clic entre 1.0 et 1.8 seconde.
-        </div>
-    </div>
-
-</div>
-
 <!-- Gérard l'assistant flottant -->
 <div id="gerard-assistant">
     <div class="gerard-avatar" onclick="pokeGerard()" title="Cliquez pour agacer Gérard">📎</div>
     <div class="gerard-bubble">
         <div class="gerard-name">Gérard — Inspecteur Ergonomique</div>
-        <div id="gerard-text">Bonjour ! Je vois que vous tentez d'utiliser cette page. Avez-vous pensé à desserrer le frein à main avant de scroller ?</div>
+        <div id="gerard-text">Bonjour ! Je vois que vous tentez d'utiliser cette page. Avez-vous pensé à desserrer le frein à main (à droite) avant de scroller ?</div>
     </div>
 </div>
 
@@ -775,49 +795,51 @@
 
     function playSound(type) {
         if (!soundEnabled) return;
-        initAudio();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
+        try {
+            initAudio();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
 
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
 
-        const now = audioCtx.currentTime;
+            const now = audioCtx.currentTime;
 
-        if (type === 'boing') {
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(180, now);
-            osc.frequency.exponentialRampToValueAtTime(580, now + 0.18);
-            gain.gain.setValueAtTime(0.15, now);
-            gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
-            osc.start(now);
-            osc.stop(now + 0.2);
-        } else if (type === 'error') {
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(130, now);
-            osc.frequency.setValueAtTime(95, now + 0.12);
-            gain.gain.setValueAtTime(0.15, now);
-            gain.gain.linearRampToValueAtTime(0.01, now + 0.28);
-            osc.start(now);
-            osc.stop(now + 0.28);
-        } else if (type === 'pump') {
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(120, now);
-            osc.frequency.linearRampToValueAtTime(300, now + 0.1);
-            gain.gain.setValueAtTime(0.2, now);
-            gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
-            osc.start(now);
-            osc.stop(now + 0.12);
-        } else if (type === 'honk') {
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(240, now);
-            osc.frequency.setValueAtTime(310, now + 0.08);
-            gain.gain.setValueAtTime(0.2, now);
-            gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
-            osc.start(now);
-            osc.stop(now + 0.35);
-        }
+            if (type === 'boing') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.exponentialRampToValueAtTime(580, now + 0.18);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            } else if (type === 'error') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(130, now);
+                osc.frequency.setValueAtTime(95, now + 0.12);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.28);
+                osc.start(now);
+                osc.stop(now + 0.28);
+            } else if (type === 'pump') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(120, now);
+                osc.frequency.linearRampToValueAtTime(300, now + 0.1);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+                osc.start(now);
+                osc.stop(now + 0.12);
+            } else if (type === 'honk') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(240, now);
+                osc.frequency.setValueAtTime(310, now + 0.08);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
+                osc.start(now);
+                osc.stop(now + 0.35);
+            }
+        } catch (e) {}
     }
 
     function toggleAudio() {
@@ -856,7 +878,6 @@
         const quotaEl = document.getElementById('click-quota');
         quotaEl.innerText = clickQuota;
 
-        // Fait tomber un boulon visuel tous les 6 clics
         if (Math.abs(clickQuota) % 6 === 0) {
             spawnFallingScrew(e.clientX, e.clientY);
         }
@@ -890,8 +911,8 @@
         if (cookieRefuseTries < 4) {
             cookieRefuseTries++;
             playSound('boing');
-            const x = (Math.random() * 240) - 120;
-            const y = (Math.random() * 140) - 70;
+            const x = (Math.random() * 200) - 100;
+            const y = (Math.random() * 120) - 60;
             btn.style.transform = `translate(${x}px, ${y}px)`;
             const labels = [
                 "Oups, raté !",
@@ -912,7 +933,7 @@
     function acceptCookies() {
         playSound('pump');
         document.getElementById('cookie-modal').style.display = 'none';
-        gerardSay("Parfait, vos cookies sont au four ! Commencez par remplir votre identité (surveillez votre niveau d'encre).");
+        gerardSay("Parfait, vos cookies sont au four ! Commencez par remplir votre identité (et surveillez votre niveau d'encre).");
     }
 
     /* ==========================================
@@ -963,11 +984,12 @@
         if (handbrakeOn && Math.abs(window.scrollY - lockedScrollY) > 5) {
             isForcingScroll = true;
             window.scrollTo(0, lockedScrollY);
-            document.body.classList.add('shake');
+            const wrapper = document.getElementById('page-wrapper');
+            wrapper.classList.add('shake');
             playSound('error');
-            gerardSay("🚨 ARRÊTEZ ! Vous essayez de scroller avec le frein à main serré ! Vous allez brûler l'embrayage de la barre de défilement !");
+            gerardSay("🚨 ARRÊTEZ ! Vous essayez de scroller avec le frein à main serré (à droite) ! Vous allez brûler l'embrayage de la barre de défilement !");
             setTimeout(() => {
-                document.body.classList.remove('shake');
+                wrapper.classList.remove('shake');
                 isForcingScroll = false;
             }, 350);
         }
@@ -1010,18 +1032,15 @@
             return;
         }
 
-        // Diminue l'encre
         inkLevel = Math.max(0, inkLevel - 16);
         updateInkUI();
 
-        // Mode clavier "Lendemain de soirée"
-        if (document.getElementById(' anarchy-keys').checked && e.key.length === 1) {
+        if (document.getElementById('anarchy-keys').checked && e.key.length === 1) {
             e.preventDefault();
             const drunkChars = "🤪🍷🫧?!§@#&éèçà";
             nameInput.value += drunkChars[Math.floor(Math.random() * drunkChars.length)];
         }
 
-        // Autocorrect absurde après une pause
         clearTimeout(autocorrectTimer);
         if (document.getElementById('autocorrect-cb').checked) {
             autocorrectTimer = setTimeout(applyTrollAutocorrect, 1100);
@@ -1101,7 +1120,6 @@
         for (let y = 1945; y <= 2025; y++) {
             list.push({ num: y, text: numberToFrenchWords(y) });
         }
-        // Tri strictement alphabétique !
         list.sort((a, b) => a.text.localeCompare(b.text, 'fr'));
 
         list.forEach(item => {
@@ -1159,7 +1177,6 @@
         }
     }
 
-    // Le vent pousse le numéro en continu si la fenêtre est ouverte
     setInterval(() => {
         if (windowOpen) {
             phoneSlider.value = parseInt(phoneSlider.value) + 247;
@@ -1183,19 +1200,15 @@
 
         document.getElementById('pwd-len').innerText = val.length;
 
-        // Règle 1 : Voyelle majuscule
         const r1 = /[AEIOUY]/.test(val);
         setRuleState('rule-1', r1);
 
-        // Règle 2 : MOUTARDE ou synonyme d'angoisse
         const r2 = /(moutarde|angoisse|lundi|impots|caf|gerard)/i.test(val);
         setRuleState('rule-2', r2);
 
-        // Règle 3 : Ponctuation
         const r3 = /(\.\.\.|!|\?)/.test(val);
         setRuleState('rule-3', r3);
 
-        // Règle 4 : Longueur impaire
         const r4 = val.length > 0 && (val.length % 2 === 1);
         setRuleState('rule-4', r4);
     }
@@ -1244,7 +1257,6 @@
             playSound('error');
         }
 
-        // Triangle infernal : si les 3 sont cochées, décoche une au hasard
         if (c1.checked && c2.checked && c3.checked) {
             playSound('boing');
             if (num === 1) c3.checked = false;
