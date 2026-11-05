@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LAG MACHINE 9000</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:#05060a;overflow:hidden;color:#e8e8f0;
+    font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;cursor:crosshair}
+  canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+  #gl{z-index:1;background:#000}
+  #p2d{z-index:2;opacity:.9;mix-blend-mode:screen}
+  #domhell{position:fixed;inset:0;z-index:3;overflow:hidden;pointer-events:none}
+  #scan{position:fixed;inset:0;z-index:4;pointer-events:none;mix-blend-mode:overlay;
+    background:repeating-linear-gradient(to bottom,rgba(0,0,0,.4) 0 1px,rgba(255,255,255,.03) 1px 3px)}
+  #vig{position:fixed;inset:0;z-index:5;pointer-events:none;
+    background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.85) 100%)}
+
+  #hud{position:fixed;z-index:10;top:10px;left:10px;width:290px;padding:12px;
+    background:rgba(8,9,14,.86);border:1px solid #2b2f3d;border-radius:10px;
+    box-shadow:0 0 0 1px #000,0 12px 40px rgba(0,0,0,.8);backdrop-filter:blur(6px)}
+  #hud h1{font-size:13px;letter-spacing:.18em;color:#ff5d3b;text-shadow:0 0 12px #ff2d00}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0}
+  #fps{color:#7ef0a0;font-variant-numeric:tabular-nums}
+  input[type=range]{-webkit-appearance:none;height:4px;background:#2b2f3d;border-radius:4px;flex:1}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;
+    background:#ff5d3b;box-shadow:0 0 10px #ff2d00;cursor:pointer}
+  .toggles{display:grid;grid-template-columns:1fr 1fr;gap:4px 8px;margin:10px 0;font-size:11px}
+  .toggles label{display:flex;align-items:center;gap:6px;color:#9aa3b8;cursor:pointer;user-select:none}
+  .toggles input{accent-color:#ff5d3b}
+  button{flex:1;padding:7px 4px;font:inherit;font-weight:700;letter-spacing:.08em;cursor:pointer;
+    background:#171a24;color:#e8e8f0;border:1px solid #333a4d;border-radius:6px;transition:.12s}
+  button:hover{background:#232838;border-color:#ff5d3b;color:#fff}
+  #go{background:#ff3b18;border-color:#ff7a4d;color:#fff;box-shadow:0 0 18px rgba(255,59,24,.5)}
+  #stats{margin-top:8px;font-size:10px;color:#6d778c;line-height:1.6}
+  #stats b{color:#c8cfdd;font-weight:600}
+  .hint{font-size:10px;color:#5a6377;margin-top:6px;line-height:1.5}
+
+  #boot{position:fixed;inset:0;z-index:50;display:grid;place-items:center;text-align:center;
+    background:radial-gradient(circle at 50% 40%,#12141d,#05060a 70%);padding:24px}
+  #boot .box{max-width:560px}
+  #boot h2{font-size:clamp(26px,6vw,54px);letter-spacing:.1em;line-height:1;
+    color:#fff;text-shadow:0 0 24px #ff3b18,0 0 60px #ff3b18;margin-bottom:16px}
+  #boot p{color:#98a1b6;margin:10px 0;font-size:13px;line-height:1.7}
+  #boot code{color:#ff8a63}
+  #boot button{display:inline-block;flex:0;margin-top:18px;padding:14px 34px;font-size:14px;
+    background:#ff3b18;border:none;border-radius:999px;color:#fff;box-shadow:0 0 30px rgba(255,59,24,.6)}
+  .flick{animation:f 3s infinite}
+  @keyframes f{0%,97%{opacity:1}98%{opacity:.35}99%{opacity:1}}
+</style>
+</head>
+<body>
+
+<canvas id="gl"></canvas>
+<canvas id="p2d"></canvas>
+<div id="domhell"></div>
+<div id="scan"></div>
+<div id="vig"></div>
+
+<div id="hud">
+  <div class="row"><h1>LAG MACHINE 9000</h1><span id="fps">-- fps</span></div>
+  <div class="row"><span>Intensité</span><input id="int" type="range" min="1" max="5" step="1" value="2"><b id="intv">2</b></div>
+  <div class="toggles">
+    <label><input type="checkbox" id="t-gl" checked>Shader 3D</label>
+    <label><input type="checkbox" id="t-part" checked>Particules</label>
+    <label><input type="checkbox" id="t-dom" checked>DOM hell</label>
+    <label><input type="checkbox" id="t-cpu" checked>CPU workers</label>
+    <label><input type="checkbox" id="t-mem" checked>RAM</label>
+    <label><input type="checkbox" id="t-audio" checked>Audio</label>
+    <label><input type="checkbox" id="t-store" checked>Storage</label>
+    <label><input type="checkbox" id="t-scan" checked>Scanlines</label>
+  </div>
+  <div class="row"><button id="go">DÉMARRER</button><button id="stop">STOP</button><button id="rel">RELOAD</button></div>
+  <div id="stats"></div>
+  <div class="hint">Barre espace = stop. Monte l'intensité jusqu'à 5 pour le vrai carnage.</div>
+</div>
+
+<div id="boot">
+  <div class="box">
+    <h2 class="flick">LAG MACHINE 9000</h2>
+    <p>Une page qui pousse ton PC dans ses retranchements : <code>raymarching fractal en temps réel</code>, centaines de milliers de particules, DOM thrashing, workers qui saturent tous les cœurs, pression mémoire et audio.</p>
+    <p>Commence en <code>intensité 2</code>. Si ça tient, monte à 5. Ferme les autres onglets avant.</p>
+    <p style="color:#5a6377;font-size:11px">Sur mobile ça chauffe, sur PC de bureau ça fige l'onglet. Un seul moyen de sortir : le bouton STOP (ou espace).</p>
+    <button id="boot-go">TOUT DÉFONCER</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ============================================================
+   ÉTAT GLOBAL
+   ============================================================ */
+const S = { intensity: 2, running: false,
+  gl:false, part:false, dom:false, cpu:false, mem:false, audio:false, store:false };
+
+const $ = id => document.getElementById(id);
+const dprFor = () => Math.min(2.5, (window.devicePixelRatio || 1) * (0.7 + S.intensity * 0.28));
+
+/* ============================================================
+   1. SHADER 3D — raymarching d'éponge de Menger (GPU melter)
+   ============================================================ */
+let GL = null;
+
+const FRAG = `
+precision highp float;
+uniform vec2  u_res;
+uniform float u_time;
+uniform float u_steps;
+uniform float u_iter;
+mat2 rot(float a){ float c=cos(a), s=sin(a); return mat2(c,-s,s,c); }
+float map(vec3 p){
+  p.xz *= rot(u_time*0.25);
+  p.xy *= rot(u_time*0.17);
+  float d = length(p) - 1.15;
+  float s = 1.0;
+  for(float i=0.0;i<12.0;i++){
+    if(i >= u_iter) break;
+    vec3 a = mod(p*s, 2.0) - 1.0;
+    s *= 3.0;
+    vec3 r = abs(1.0 - 3.0*abs(a));
+    float da = max(r.x, r.y);
+    float db = max(r.y, r.z);
+    float dc = max(r.z, r.x);
+    float c  = (min(da, min(db, dc)) - 1.0) / s;
+    d = max(d, c);
+  }
+  return d;
+}
+void main(){
+  vec2 uv = (gl_FragCoord.xy - 0.5*u_res) / u_res.y;
+  vec3 ro = vec3(0.0, 0.0, 2.7);
+  vec3 rd = normalize(vec3(uv, -1.25));
+  float t = 0.0, hit = 0.0;
+  for(float i=0.0;i<240.0;i++){
+    if(i > u_steps) break;
+    vec3 p = ro + rd*t;
+    float d = map(p);
+    if(d < 0.0009){ hit = 1.0; break; }
+    if(t > 7.5) break;
+    t += d * 0.85;
+  }
+  vec3 col = vec3(0.015, 0.018, 0.035);
+  if(hit > 0.5){
+    vec3 p = ro + rd*t;
+    vec3 n = normalize(vec3(
+      map(p+vec3(0.001,0.0,0.0)) - map(p-vec3(0.001,0.0,0.0)),
+      map(p+vec3(0.0,0.001,0.0)) - map(p-vec3(0.0,0.001,0.0)),
+      map(p+vec3(0.0,0.0,0.001)) - map(p-vec3(0.0,0.0,0.001))));
+    vec3 l = normalize(vec3(1.0, 1.5, 0.9));
+    float dif = max(dot(n, l), 0.0);
+    float fre = pow(1.0 - max(dot(n, -rd), 0.0), 3.0);
+    vec3 base = 0.5 + 0.5*cos(vec3(0.0, 2.1, 4.3) + t*2.2 + u_time*0.6);
+    col = base*(dif*0.95 + fre*0.9) + fre*0.5;
+    col *= 1.0 / (1.0 + t*t*0.13);
+  } else {
+    col += 0.07 * pow(max(0.0, 1.0 - length(uv)), 2.0);
+  }
+  // remplissage lourd : 48 itérations de post-traitement
+  for(float j=0.0;j<48.0;j++) col += 0.0045*sin(col*3.0 + j + u_time);
+  float g = fract(sin(dot(gl_FragCoord.xy + u_time, vec2(12.9898, 78.233))) * 43758.5453);
+  col += (g - 0.5) * 0.07;
+  col *= 1.0 - 0.55*length(uv);
+  gl_FragColor = vec4(col, 1.0);
+}`;
+
+function glInit(){
+  if (GL) return;
+  const cv = $('gl');
+  const gl = cv.getContext('webgl', { antialias:false, alpha:false, depth:false,
+    powerPreference:'high-performance', preserveDrawingBuffer:false });
+  if (!gl) return;
+  const sh = (type, src) => {
+    const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s;
+  };
+  const prog = gl.createProgram();
+  gl.attachShader(prog, sh(gl.VERTEX_SHADER, 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}'));
+  gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG));
+  gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { console.warn(gl.getProgramInfoLog(prog)); return; }
+  gl.useProgram(prog);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(prog, 'p');
+  gl.enableVertexAttribArray(loc);
+  gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  GL = { gl, cv, prog,
+    u_res:   gl.getUniformLocation(prog, 'u_res'),
+    u_time:  gl.getUniformLocation(prog, 'u_time'),
+    u_steps: gl.getUniformLocation(prog, 'u_steps'),
+    u_iter:  gl.getUniformLocation(prog, 'u_iter') };
+  glResize();
+}
+function glResize(){
+  if (!GL) return;
+  const d = dprFor();
+  GL.cv.width  = Math.max(2, Math.floor(innerWidth  * d));
+  GL.cv.height = Math.max(2, Math.floor(innerHeight * d));
+}
+function glDraw(t){
+  if (!GL) return;
+  const { gl, cv } = GL;
+  gl.viewport(0, 0, cv.width, cv.height);
+  gl.uniform2f(GL.u_res, cv.width, cv.height);
+  gl.uniform1f(GL.u_time, t);
+  gl.uniform1f(GL.u_steps, 40 + S.intensity * 32);
+  gl.uniform1f(GL.u_iter,  2.5 + S.intensity * 1.3);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+}
+
+/* ============================================================
+   2. PARTICULES 2D — canvas + blend additif
+   ============================================================ */
+const P = { cv:null, ctx:null, n:0, x:null, y:null, vx:null, vy:null, h:null, size:0 };
+function partResize(){
+  const cv = $('p2d'), d = Math.min(1.5, dprFor());
+  cv.width = Math.max(2, Math.floor(innerWidth * d));
+  cv.height = Math.max(2, Math.floor(innerHeight * d));
+  P.ctx = cv.getContext('2d');
+  P.ctx.globalCompositeOperation = 'lighter';
+}
+function partCount(){ return Math.min(160000, Math.round(4000 * S.intensity * S.intensity)); }
+function partAlloc(){
+  partResize();
+  const n = partCount();
+  P.n = n;
+  P.x = new Float32Array(n); P.y = new Float32Array(n);
+  P.vx = new Float32Array(n); P.vy = new Float32Array(n);
+  P.h = new Float32Array(n);
+  const W = P.cv ? P.cv.width : innerWidth, H = P.cv ? P.cv.height : innerHeight;
+  for (let i = 0; i < n; i++) {
+    P.x[i] = Math.random() * W;
+    P.y[i] = Math.random() * H;
+    P.vx[i] = (Math.random() - 0.5) * 4;
+    P.vy[i] = (Math.random() - 0.5) * 4;
+    P.h[i] = Math.random() * 360;
+  }
+}
+function partFrame(){
+  if (!P.ctx) return;
+  const W = P.ctx.canvas.width, H = P.ctx.canvas.height;
+  const cx = W * 0.5, cy = H * 0.5;
+  P.ctx.fillStyle = 'rgba(3,4,8,0.16)';
+  P.ctx.fillRect(0, 0, W, H);
+  const n = P.n;
+  for (let i = 0; i < n; i++) {
+    const dx = cx - P.x[i], dy = cy - P.y[i];
+    const d2 = dx*dx + dy*dy + 1;
+    const f = 2200 / d2;
+    P.vx[i] += dx * f * 0.4;
+    P.vy[i] += dy * f * 0.4;
+    P.vx[i] *= 0.985; P.vy[i] *= 0.985;
+    P.x[i] += P.vx[i]; P.y[i] += P.vy[i];
+    if (P.x[i] < 0 || P.x[i] > W || P.y[i] < 0 || P.y[i] > H) {
+      P.x[i] = Math.random() * W; P.y[i] = Math.random() * H;
+      P.vx[i] = 0; P.vy[i] = 0;
+    }
+    P.ctx.fillStyle = 'hsl(' + ((P.h[i] + i * 0.02) % 360) + ',100%,60%)';
+    const s = 1 + (i % 3) * 0.6;
+    P.ctx.fillRect(P.x[i], P.y[i], s, s);
+  }
+}
+
+/* ============================================================
+   3. DOM HELL — éléments animés + layout thrashing + compositing
+   ============================================================ */
+const D = { els: [], raf: 0 };
+function domBuild(){
+  const host = $('domhell');
+  host.innerHTML = '';
+  D.els = [];
+  const n = Math.round(180 * S.intensity);
+  const W = innerWidth, H = innerHeight;
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i < n; i++) {
+    const e = document.createElement('div');
+    const sz = 6 + Math.random() * 70;
+    e.style.cssText =
+      'position:absolute;left:' + (Math.random()*W) + 'px;top:' + (Math.random()*H) + 'px;' +
+      'width:' + sz + 'px;height:' + sz + 'px;' +
+      'background:hsl(' + (Math.random()*360) + ',90%,55%);' +
+      'border-radius:' + (Math.random() < 0.5 ? '50%' : '4px') + ';' +
+      'box-shadow:0 0 ' + (8 + Math.random()*40) + 'px hsl(' + (Math.random()*360) + ',100%,60%);' +
+      'will-change:transform,background,box-shadow;' +
+      'opacity:' + (0.25 + Math.random()*0.75) + ';' +
+      (i % 3 === 0 ? 'filter:blur(' + (Math.random()*4).toFixed(1) + 'px);' : '');
+    frag.appendChild(e);
+    D.els.push({ e, ph: Math.random()*6.28, sp: 0.4 + Math.random()*2.2, sz });
+  }
+  host.appendChild(frag);
+}
+function domFrame(t){
+  const els = D.els, n = els.length;
+  if (!n) return;
+  // lecture forcée -> recalcul de layout
+  for (let i = 0; i < 40 && i < n; i++) void els[i].e.offsetWidth;
+  for (let i = 0; i < n; i++) {
+    const o = els[i], s = o.e.style;
+    const k = Math.sin(t * o.sp + o.ph);
+    s.transform = 'translate3d(' + (k * 120).toFixed(1) + 'px,' +
+                  (Math.cos(t * o.sp * 0.8 + o.ph) * 120).toFixed(1) + 'px,0) rotate(' +
+                  (t * o.sp * 60 % 360).toFixed(0) + 'deg) scale(' + (0.6 + Math.abs(k) * 1.6).toFixed(2) + ')';
+    s.background = 'hsl(' + ((t * 40 + i * 7) % 360) + ',95%,55%)';
+  }
+}
+
+/* ============================================================
+   4. CPU WORKERS — matmul + transcendantes sur tous les cœurs
+   ============================================================ */
+const WK = { list: [], src: '' };
+WK.src = `
+let run = true, n = 150, A = null;
+function build(){ A = new Float64Array(n*n); for (let i=0;i<A.length;i++) A[i]=Math.random(); }
+onmessage = e => {
+  if (e.data && e.data.stop) { run = false; return; }
+  if (e.data && e.data.n) { n = e.data.n; build(); }
+};
+build();
+let acc = 0;
+while (true) {
+  if (!run) { /* boucle occupée */ }
+  for (let i=0;i<n;i++){
+    for (let j=0;j<n;j++){
+      let s = 0;
+      for (let k=0;k<n;k++) s += A[i*n+k] * A[k*n+j];
+      acc += s;
+    }
+  }
+  for (let i=0;i<20000;i++) acc += Math.sin(i*0.001 + acc)*Math.cos(i*0.002) + Math.sqrt(i);
+  A[0] = acc % 1;
+  postMessage(1);
+}
+`;
+let wkURL = null;
+function cpuStart(){
+  if (WK.list.length) return;
+  if (!wkURL) wkURL = URL.createObjectURL(new Blob([WK.src], { type:'application/javascript' }));
+  const cores = navigator.hardwareConcurrency || 4;
+  const count = Math.max(1, Math.round(cores * (S.intensity / 5)) + 1);
+  const n = 90 + S.intensity * 30;
+  for (let i = 0; i < count; i++) {
+    try {
+      const w = new Worker(wkURL);
+      w.postMessage({ n });
+      w.onmessage = () => {};
+      WK.list.push(w);
+    } catch (e) { break; }
+  }
+}
+function cpuStop(){
+  WK.list.forEach(w => { try { w.postMessage({ stop:true }); w.terminate(); } catch(e){} });
+  WK.list = [];
+}
+
+/* ============================================================
+   5. PRESSION MÉMOIRE — allocation continue -> GC thrashing
+   ============================================================ */
+const M = { chunks: [], mb: 0, iv: 0, str: [] };
+function memLimit(){ return 150 + S.intensity * 300; }
+function memTick(){
+  const CH = 4; // Mo par bloc
+  M.chunks.push(new Float32Array(1e6)); // 4 Mo
+  M.mb += CH;
+  if (M.str.length < 40) M.str.push('x'.repeat(150000 + S.intensity * 80000));
+  if (M.mb > memLimit()) {
+    const half = Math.floor(M.chunks.length / 2);
+    M.chunks.splice(0, half);
+    M.mb -= half * CH;
+    M.str.length = 0;
+  }
+}
+function memStart(){ if (!M.iv) M.iv = setInterval(memTick, 140); }
+function memStop(){
+  clearInterval(M.iv); M.iv = 0;
+  M.chunks = []; M.str = []; M.mb = 0;
+}
+
+/* ============================================================
+   6. AUDIO — oscillateurs + bruit filtré
+   ============================================================ */
+const A = { ctx: null, nodes: [], iv: 0 };
+function audioStart(){
+  if (A.ctx) return;
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  if (!Ctx) return;
+  A.ctx = new Ctx();
+  const master = A.ctx.createGain();
+  master.gain.value = 0.07;
+  master.connect(A.ctx.destination);
+  A.nodes.push(master);
+  for (let i = 0; i < 7; i++) {
+    const o = A.ctx.createOscillator();
+    const f = A.ctx.createBiquadFilter();
+    const g = A.ctx.createGain();
+    o.type = i % 2 ? 'sawtooth' : 'square';
+    o.frequency.value = 42 + i * 37;
+    f.type = 'bandpass';
+    f.frequency.value = 300 + i * 260;
+    f.Q.value = 6;
+    g.gain.value = 0.05;
+    o.connect(f); f.connect(g); g.connect(master);
+    o.start();
+    A.nodes.push(o, f, g);
+  }
+  // nappe de bruit
+  const len = A.ctx.sampleRate * 2;
+  const buf = A.ctx.createBuffer(1, len, A.ctx.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+  const src = A.ctx.createBufferSource();
+  src.buffer = buf; src.loop = true;
+  const bp = A.ctx.createBiquadFilter();
+  bp.type = 'lowpass'; bp.frequency.value = 900;
+  const ng = A.ctx.createGain(); ng.gain.value = 0.05;
+  src.connect(bp); bp.connect(ng); ng.connect(master);
+  src.start();
+  A.nodes.push(src, bp, ng);
+  // balayage de filtre
+  A.iv = setInterval(() => {
+    if (!A.ctx) return;
+    const t = A.ctx.currentTime;
+    A.nodes.forEach(nd => {
+      if (nd.frequency && nd.type === 'bandpass')
+        nd.frequency.setTargetAtTime(200 + Math.random() * 4000, t, 0.1);
+    });
+  }, 120);
+}
+function audioStop(){
+  clearInterval(A.iv); A.iv = 0;
+  A.nodes.forEach(n => { try { n.stop && n.stop(); } catch(e){} try { n.disconnect(); } catch(e){} });
+  A.nodes = [];
+  if (A.ctx) { try { A.ctx.close(); } catch(e){} A.ctx = null; }
+}
+
+/* ============================================================
+   7. STORAGE SPAM
+   ============================================================ */
+let stIv = 0, stI = 0;
+function storeStart(){
+  if (stIv) return;
+  stIv = setInterval(() => {
+    try {
+      const k = 'lag_' + (stI++ % 24);
+      const v = 'x'.repeat(20000 + S.intensity * 30000);
+      localStorage.setItem(k, v);
+      void localStorage.getItem(k).length;
+    } catch (e) {}
+  }, 220);
+}
+function storeStop(){ clearInterval(stIv); stIv = 0; }
+
+/* ============================================================
+   BOUCLE PRINCIPALE
+   ============================================================ */
+let raf = 0, last = 0, frames = 0, fpsT = 0, fps = 0, t0 = 0, clock = 0;
+function loop(now){
+  raf = requestAnimationFrame(loop);
+  const dt = now - last; last = now;
+  clock = (now - t0) / 1000;
+
+  if (S.gl)      glDraw(clock);
+  if (S.part)    partFrame();
+  if (S.dom)     domFrame(clock);
+  if (S.store)   { /* géré par interval */ }
+
+  frames++;
+  if (now - fpsT > 500) {
+    fps = Math.round((frames * 1000) / (now - fpsT));
+    frames = 0; fpsT = now;
+    $('fps').textContent = fps + ' fps';
+    $('fps').style.color = fps < 10 ? '#ff3b18' : fps < 30 ? '#ffd23b' : '#7ef0a0';
+    $('stats').innerHTML =
+      '<b>' + partCount().toLocaleString('fr') + '</b> particules &middot; ' +
+      '<b>' + WK.list.length + '</b> workers &middot; ' +
+      '<b>' + M.mb + ' Mo</b> alloués &middot; ' +
+      '<b>' + clock.toFixed(0) + 's</b>';
+  }
+}
+
+/* ============================================================
+   CONTRÔLES
+   ============================================================ */
+function start(){
+  if (S.running) return;
+  S.running = true;
+  t0 = performance.now(); last = performance.now(); fpsT = performance.now();
+  if (S.gl)    glInit();
+  if (S.part)  partAlloc();
+  if (S.dom)   domBuild();
+  if (S.cpu)   cpuStart();
+  if (S.mem)   memStart();
+  if (S.audio) audioStart();
+  if (S.store) storeStart();
+  if (!raf) raf = requestAnimationFrame(loop);
+}
+function stopAll(){
+  S.running = false;
+  if (raf) { cancelAnimationFrame(raf); raf = 0; }
+  cpuStop(); memStop(); audioStop(); storeStop();
+  if (GL) { GL.gl.clearColor(0,0,0,1); GL.gl.clear(GL.gl.COLOR_BUFFER_BIT); }
+  if (P.ctx) { P.ctx.clearRect(0,0,P.ctx.canvas.width,P.ctx.canvas.height); }
+  if (D.els.length) { $('domhell').innerHTML = ''; D.els = []; }
+  $('fps').textContent = '-- fps';
+}
+function applyIntensity(){
+  $('intv').textContent = S.intensity;
+  if (!S.running) return;
+  if (S.gl) glResize();
+  if (S.part) partAlloc();
+  if (S.dom) domBuild();
+  if (S.cpu) { cpuStop(); cpuStart(); }
+}
+
+$('int').addEventListener('input', e => {
+  S.intensity = +e.target.value;
+  applyIntensity();
+});
+const toggles = { 't-gl':'gl', 't-part':'part', 't-dom':'dom', 't-cpu':'cpu',
+                  't-mem':'mem', 't-audio':'audio', 't-store':'store' };
+Object.entries(toggles).forEach(([id, key]) => {
+  $(id).addEventListener('change', e => {
+    S[key] = e.target.checked;
+    if (!S.running) return;
+    if (key === 'gl')    { if (S.gl) glInit(); else if (GL) { GL.gl.clearColor(0,0,0,1); GL.gl.clear(GL.gl.COLOR_BUFFER_BIT); } }
+    if (key === 'part')  { if (S.part) partAlloc(); else if (P.ctx) P.ctx.clearRect(0,0,P.ctx.canvas.width,P.ctx.canvas.height); }
+    if (key === 'dom')   { if (S.dom) domBuild(); else { $('domhell').innerHTML=''; D.els=[]; } }
+    if (key === 'cpu')   { S.cpu ? cpuStart() : cpuStop(); }
+    if (key === 'mem')   { S.mem ? memStart() : memStop(); }
+    if (key === 'audio') { S.audio ? audioStart() : audioStop(); }
+    if (key === 'store') { S.store ? storeStart() : storeStop(); }
+  });
+});
+$('t-scan').addEventListener('change', e => {
+  $('scan').style.display = $('vig').style.display = e.target.checked ? '' : 'none';
+});
+
+$('go').onclick = start;
+$('stop').onclick = stopAll;
+$('rel').onclick = () => location.reload();
+$('boot-go').onclick = () => { $('boot').remove(); start(); };
+addEventListener('keydown', e => {
+  if (e.code === 'Space') { e.preventDefault(); S.running ? stopAll() : start(); }
+  if (e.key === 'Escape') stopAll();
+});
+addEventListener('resize', () => { if (S.running) { if (S.gl) glResize(); if (S.part) partResize(); } });
+</script>
+</body>
+</html>
