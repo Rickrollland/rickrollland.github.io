@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portail CERFA-404 — Homologation Officielle de Navigation</title>
+<style>
+    :root {
+        --blue: #000091;
+        --red: #e1000f;
+        --bg: #f4f6f9;
+        --card: #ffffff;
+        --text: #1e1e1e;
+        --border: #d0d7de;
+        --tilt: 0deg;
+        --ink-opacity: 1;
+    }
+
+    * {
+        box-sizing: border-box;
+        user-select: none;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        background-color: var(--bg);
+        color: var(--text);
+        overflow-x: hidden;
+        transition: transform 0.2s ease-out;
+        transform: rotate(var(--tilt));
+        transform-origin: center top;
+        padding-bottom: 350px;
+    }
+
+    /* Bandeau d'affichage géant du mot de passe */
+    #password-billboard {
+        position: sticky;
+        top: 0;
+        z-index: 9000;
+        background: #111;
+        color: #00ff66;
+        font-family: 'Courier New', monospace;
+        padding: 8px 15px;
+        text-align: center;
+        font-size: 14px;
+        border-bottom: 3px solid #00ff66;
+        display: none;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+    #password-billboard span {
+        font-size: 22px;
+        font-weight: bold;
+        color: #ff0055;
+        background: #fff;
+        padding: 2px 8px;
+        border-radius: 4px;
+        margin-left: 8px;
+        letter-spacing: 2px;
+    }
+
+    /* Header Officiel Parodique */
+    header {
+        background: #fff;
+        border-bottom: 4px solid var(--blue);
+        padding: 15px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        position: relative;
+    }
+
+    .marianne-box {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .flag {
+        width: 45px;
+        height: 30px;
+        background: linear-gradient(90deg, #000091 33%, #fff 33%, #fff 66%, #e1000f 66%);
+        border: 1px solid #ccc;
+    }
+
+    .gov-title {
+        font-weight: 800;
+        font-size: 14px;
+        line-height: 1.1;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .gov-sub {
+        font-size: 11px;
+        color: #666;
+        font-style: italic;
+    }
+
+    /* Barre d'outils absurde */
+    .control-bar {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        background: #eef1f6;
+        padding: 10px 15px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        font-size: 13px;
+    }
+
+    .control-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* Conteneur Principal */
+    .container {
+        max-width: 780px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .alert-slope {
+        background: #fff3cd;
+        border-left: 5px solid #ffecb5;
+        border: 1px solid #ffe69c;
+        color: #664d03;
+        padding: 12px 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 14px;
+    }
+
+    .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .card h2 {
+        margin-top: 0;
+        font-size: 18px;
+        color: var(--blue);
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .badge {
+        font-size: 11px;
+        background: #ffe3e3;
+        color: var(--red);
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-weight: 600;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 6px;
+        font-size: 14px;
+    }
+
+    input[type="text"], input[type="password"], select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 2px solid #ccc;
+        border-radius: 6px;
+        font-size: 15px;
+        transition: all 0.2s;
+    }
+
+    /* Jauge d'encre */
+    #name-input {
+        color: rgba(0, 0, 50, var(--ink-opacity));
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+    }
+
+    .ink-bar-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 8px;
+        background: #f8f9fa;
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px dashed #ccc;
+    }
+
+    .ink-meter {
+        flex-grow: 1;
+        height: 12px;
+        background: #e9ecef;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    .ink-fill {
+        height: 100%;
+        width: 100%;
+        background: linear-gradient(90deg, #000091, #4dabf7);
+        transition: width 0.2s;
+    }
+
+    button {
+        cursor: pointer;
+        padding: 8px 14px;
+        border-radius: 6px;
+        border: 1px solid var(--blue);
+        background: var(--blue);
+        color: #fff;
+        font-weight: 600;
+        font-size: 13px;
+        transition: transform 0.1s, background 0.2s;
+    }
+
+    button:hover {
+        background: #1212ff;
+    }
+
+    button.secondary {
+        background: #fff;
+        color: var(--blue);
+    }
+
+    button.secondary:hover {
+        background: #f0f4ff;
+    }
+
+    /* Frein à main de scroll (Fixe à droite) */
+    .handbrake-panel {
+        position: fixed;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #2b2d42;
+        color: #fff;
+        padding: 15px;
+        border-radius: 12px;
+        width: 150px;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+        z-index: 8000;
+        border: 3px solid #8d99ae;
+    }
+
+    .lever-box {
+        height: 90px;
+        background: #1a1b28;
+        margin: 10px 0;
+        border-radius: 8px;
+        position: relative;
+        cursor: pointer;
+        border: 1px inset #555;
+    }
+
+    .lever-handle {
+        width: 80%;
+        height: 28px;
+        background: var(--red);
+        border-radius: 6px;
+        position: absolute;
+        left: 10%;
+        top: 8px;
+        transition: top 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: bold;
+        box-shadow: 0 4px 0 #900;
+    }
+
+    .lever-handle.released {
+        top: 52px;
+        background: #2b9348;
+        box-shadow: 0 4px 0 #1b5e2e;
+    }
+
+    /* Téléphone éolien */
+    .wind-box {
+        background: #e3f2fd;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #90caf9;
+    }
+
+    .phone-display {
+        font-size: 26px;
+        font-family: monospace;
+        font-weight: bold;
+        text-align: center;
+        letter-spacing: 3px;
+        background: #fff;
+        padding: 10px;
+        border-radius: 6px;
+        border: 2px inset #ccc;
+        margin-bottom: 10px;
+    }
+
+    /* Captcha Émotionnel */
+    .captcha-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .captcha-cell {
+        background: #f8f9fa;
+        border: 2px solid #dee2e6;
+        border-radius: 8px;
+        height: 85px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 28px;
+        position: relative;
+        transition: transform 0.1s;
+    }
+
+    .captcha-cell span {
+        font-size: 11px;
+        color: #555;
+        margin-top: 4px;
+        text-align: center;
+    }
+
+    .captcha-cell.selected {
+        border-color: var(--blue);
+        background: #e7f5ff;
+    }
+
+    @keyframes nervous-shake {
+        0% { transform: translate(1px, 1px) rotate(0deg); }
+        25% { transform: translate(-2px, -1px) rotate(-2deg); }
+        50% { transform: translate(-1px, 2px) rotate(2deg); }
+        75% { transform: translate(2px, 1px) rotate(-1deg); }
+        100% { transform: translate(1px, -2px) rotate(1deg); }
+    }
+
+    .nervous:hover {
+        animation: nervous-shake 0.12s infinite;
+    }
+
+    /* Gérard l'Assistant (Clippy Parody) */
+    #gerard-assistant {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        display: flex;
+        align-items: flex-end;
+        gap: 12px;
+        z-index: 8500;
+        max-width: 360px;
+    }
+
+    .gerard-avatar {
+        width: 65px;
+        height: 65px;
+        background: #ffd166;
+        border: 3px solid #111;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        cursor: pointer;
+        flex-shrink: 0;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-6px); }
+    }
+
+    .gerard-bubble {
+        background: #fff;
+        border: 2px solid #111;
+        border-radius: 14px 14px 14px 2px;
+        padding: 12px 15px;
+        font-size: 13px;
+        box-shadow: 4px 4px 0px #111;
+        line-height: 1.4;
+    }
+
+    .gerard-name {
+        font-weight: 800;
+        font-size: 11px;
+        text-transform: uppercase;
+        color: var(--blue);
+        margin-bottom: 4px;
+    }
+
+    /* Cookie Banner infernal */
+    #cookie-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.65);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(3px);
+    }
+
+    .cookie-box {
+        background: #fff;
+        width: 90%;
+        max-width: 520px;
+        padding: 25px;
+        border-radius: 12px;
+        border-top: 8px solid var(--blue);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        position: relative;
+    }
+
+    .cookie-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+        justify-content: flex-end;
+        position: relative;
+        min-height: 45px;
+    }
+
+    /* Menu contextuel clic droit */
+    #custom-context {
+        position: fixed;
+        background: #fff;
+        border: 2px solid #111;
+        box-shadow: 5px 5px 0 rgba(0,0,0,0.2);
+        border-radius: 6px;
+        padding: 6px 0;
+        z-index: 10000;
+        display: none;
+        width: 240px;
+        font-size: 13px;
+    }
+
+    .ctx-item {
+        padding: 8px 15px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+    }
+    .ctx-item:hover {
+        background: var(--blue);
+        color: #fff;
+    }
+
+    /* Effet de secousse d'écran */
+    @keyframes screen-shake {
+        0%, 100% { transform: translateX(0) rotate(var(--tilt)); }
+        20%, 60% { transform: translateX(-8px) rotate(var(--tilt)); }
+        40%, 80% { transform: translateX(8px) rotate(var(--tilt)); }
+    }
+
+    .shake {
+        animation: screen-shake 0.35s ease;
+    }
+
+    /* Vis qui tombent quand on clique trop fort */
+    .falling-screw {
+        position: fixed;
+        font-size: 20px;
+        pointer-events: none;
+        z-index: 9500;
+        transition: top 1s cubic-bezier(0.55, 0.085, 0.68, 0.53), transform 1s linear;
+    }
+
+    /* Modal finale de file d'attente */
+    #queue-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 80, 0.9);
+        color: #fff;
+        z-index: 10000;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .ticket-box {
+        background: #fff;
+        color: #111;
+        padding: 30px;
+        border-radius: 12px;
+        max-width: 480px;
+        border: 4px dashed var(--red);
+    }
+
+    .rules-list li {
+        font-size: 13px;
+        margin-bottom: 5px;
+        transition: color 0.2s;
+    }
+    .rules-list li.valid { color: #2b9348; text-decoration: line-through; }
+    .rules-list li.invalid { color: var(--red); font-weight: bold; }
+</style>
+</head>
+<body>
+
+<!-- Panneau géant qui affiche le mot de passe en clair -->
+<div id="password-billboard">
+    👁️ ASSISTANCE VISUELLE ANTI-FAUTES DE FRAPPE — VOTRE MOT DE PASSE ACTUEL EST : <span id="billboard-text"></span>
+</div>
+
+<!-- Header Administratif -->
+<header>
+    <div class="marianne-box">
+        <div class="flag"></div>
+        <div>
+            <div class="gov-title">République du Clic<br>Ministère du Temps Perdu</div>
+            <div class="gov-sub">Formulaire Cerfa n°404-B — Homologation d'Utilisateur</div>
+        </div>
+    </div>
+
+    <div class="control-bar">
+        <div class="control-item" title="Ajuste le volume sonore de la page">
+            <span>🔊 Volume :</span>
+            <input type="range" id="volume-slider" min="-8" max="8" value="0" step="1" style="width: 90px;">
+            <span id="volume-label">0°</span>
+        </div>
+        <div class="control-item">
+            <button class="secondary" id="mute-btn" onclick="toggleAudio()">🔔 Son : Activé</button>
+        </div>
+        <div class="control-item">
+            <span>Clics restants : <strong id="click-quota">25</strong></span>
+        </div>
+    </div>
+</header>
+
+<!-- Frein à main de défilement -->
+<div class="handbrake-panel">
+    <div style="font-size: 12px; font-weight: bold; margin-bottom: 4px;">FREIN À MAIN DE DÉFILEMENT</div>
+    <div style="font-size: 10px; color: #ccc;">Sécurité anti-scroll</div>
+    <div class="lever-box" onclick="toggleHandbrake()">
+        <div class="lever-handle" id="handbrake-handle">SERRÉ (BLOQUÉ)</div>
+    </div>
+    <button id="wedge-btn" onclick="toggleWedge()" style="width:100%; font-size:11px; background:#f77f00; border:none;">
+        📐 Mettre une cale
+    </button>
+</div>
+
+<!-- Contenu Principal -->
+<div class="container">
+
+    <div class="alert-slope">
+        <div>
+            <strong>⚠️ Attention :</strong> Cette page web est hébergée sur un serveur en pente (inclinaison de 14%). Si vous desserrez le frein à main sans mettre de cale, la page remontera toute seule.
+        </div>
+    </div>
+
+    <!-- SECTION 1 : IDENTITÉ & ENCRE -->
+    <div class="card">
+        <h2>1. Déclaration d'Identité <span class="badge">Encre Certifiée</span></h2>
+        <div class="form-group">
+            <label for="name-input">Nom et Prénom (Attention à la pression d'encre du clavier) :</label>
+            <input type="text" id="name-input" placeholder="Tapez votre nom ici..." autocomplete="off">
+            
+            <div class="ink-bar-container">
+                <span style="font-size: 12px; font-weight: bold;">🖨️ Niveau de toner :</span>
+                <div class="ink-meter">
+                    <div class="ink-fill" id="ink-fill"></div>
+                </div>
+                <button type="button" onclick="pumpInk()">Pomper de l'encre ⛽</button>
+            </div>
+        </div>
+
+        <div class="form-group" style="display:flex; gap:15px; align-items:center; font-size:13px;">
+            <label style="margin:0; cursor:pointer;">
+                <input type="checkbox" id="autocorrect-cb" checked onchange="toggleAutocorrect(this)">
+                Activer l'Amélioration Créative des Prénoms par IA
+            </label>
+            <label style="margin:0; cursor:pointer;">
+                <input type="checkbox" id=" anarchy-keys">
+                Clavier en mode "Lendemain de soirée"
+            </label>
+        </div>
+    </div>
+
+    <!-- SECTION 2 : DATE DE NAISSANCE ALPHABÉTIQUE -->
+    <div class="card">
+        <h2>2. Millésime de Naissance <span class="badge">Tri Optimisé</span></h2>
+        <div class="form-group">
+            <label for="birth-year">Sélectionnez votre année de naissance (triée par ordre alphabétique strict pour plus d'équité) :</label>
+            <select id="birth-year" onchange="onYearChange(this)">
+                <option value="">-- Veuillez chercher patiemment --</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- SECTION 3 : TÉLÉPHONE ÉOLIEN -->
+    <div class="card">
+        <h2>3. Coordonnées Téléphoniques <span class="badge">Météo Sensible</span></h2>
+        <div class="wind-box">
+            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:8px;">
+                <span>🌬️ <strong>Météo du formulaire :</strong> Vent d'Ouest (Force 4)</span>
+                <span id="window-status" style="color:var(--red); font-weight:bold;">🪟 Fenêtre ouverte (Courant d'air !)</span>
+            </div>
+            <div class="phone-display" id="phone-display">06 12 34 56 78</div>
+            <input type="range" id="phone-slider" min="600000000" max="799999999" value="612345678" style="width:100%;" oninput="updatePhoneFromSlider()">
+            
+            <div style="display:flex; gap:10px; margin-top:10px; justify-content:center;">
+                <button type="button" class="secondary" onclick="blowOnPhone(-15432)">💨 Souffler à gauche</button>
+                <button type="button" class="secondary" onclick="blowOnPhone(15432)">💨 Souffler à droite</button>
+                <button type="button" id="window-btn" onclick="toggleWindow()">Fermer la fenêtre 🪟</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 4 : MOT DE PASSE PARANOÏAQUE -->
+    <div class="card">
+        <h2>4. Sécurité Quantique <span class="badge">RGPD++</span></h2>
+        <div class="form-group">
+            <label for="pwd-input">Créez un mot de passe conforme aux exigences lunaires :</label>
+            <input type="password" id="pwd-input" placeholder="Mot de passe ultra-secret..." oninput="checkPassword(this.value)">
+            <ul class="rules-list" style="margin-top:10px; padding-left:20px;">
+                <li id="rule-1" class="invalid">Doit contenir au moins une voyelle criée très fort (MAJUSCULE).</li>
+                <li id="rule-2" class="invalid">Doit contenir le mot "MOUTARDE" ou un synonyme d'angoisse.</li>
+                <li id="rule-3" class="invalid">Doit contenir un signe de ponctuation passif-agressif ("..." ou "!").</li>
+                <li id="rule-4" class="invalid">La longueur du mot de passe doit être un nombre impair (actuel : <span id="pwd-len">0</span>).</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- SECTION 5 : CAPTCHA PSYCHOLOGIQUE -->
+    <div class="card">
+        <h2>5. Vérification d'Humanité <span class="badge">Test de Turing Émotionnel</span></h2>
+        <p style="font-size:14px; margin-top:0;">
+            Prouvez que vous n'êtes pas un robot : <strong>Cliquez uniquement sur les éléments qui manquent cruellement de confiance en eux.</strong>
+        </p>
+        <div class="captcha-grid">
+            <div class="captcha-cell" onclick="selectCaptcha(this, false)">😎<span>Sûr de lui</span></div>
+            <div class="captcha-cell nervous" onclick="selectCaptcha(this, true)">😰<span>Tremble au survol</span></div>
+            <div class="captcha-cell" onclick="selectCaptcha(this, false)">🗿<span>Impassible</span></div>
+            <div class="captcha-cell" onclick="selectCaptcha(this, false)">🚀<span>Ambitieux</span></div>
+            <div class="captcha-cell nervous" onclick="selectCaptcha(this, true)">🥺<span>Regard fuyant</span></div>
+            <div class="captcha-cell" id="fleeing-captcha" onmouseenter="fleeCaptcha(this)" onclick="selectCaptcha(this, true)">🏃<span>Phobie des souris</span></div>
+        </div>
+    </div>
+
+    <!-- SECTION 6 : CGU & SOUMISSION -->
+    <div class="card">
+        <h2>6. Consentement Mutuel & Validation <span class="badge">Étape Finale</span></h2>
+        <div class="form-group" style="font-size:14px; line-height:1.8;">
+            <label style="cursor:pointer;">
+                <input type="checkbox" id="cgu-1" onchange="handleCguTriangle(1)">
+                J'ai lu, compris et appris par cœur les 4 820 pages des Conditions Générales.
+            </label>
+            <label style="cursor:pointer;">
+                <input type="checkbox" id="cgu-2" onchange="handleCguTriangle(2)">
+                Je certifie sur l'honneur ne pas avoir menti à la case précédente.
+            </label>
+            <label style="cursor:pointer;">
+                <input type="checkbox" id="cgu-3" onchange="handleCguTriangle(3)">
+                J'accepte de recevoir des fax publicitaires à 3h du matin.
+            </label>
+        </div>
+
+        <div id="lie-detector" style="display:none; background:#ffe3e3; color:var(--red); padding:10px; border-radius:6px; font-size:13px; margin-bottom:15px; font-weight:bold;">
+            🚨 Détecteur de mensonge : Vous avez coché la case 1 sans lire les CGU (temps passé : 0.0 seconde).
+        </div>
+
+        <div style="position:relative; height:70px; display:flex; align-items:center; justify-content:center; border-top:1px solid #eee; padding-top:15px;">
+            <button type="button" id="submit-btn" 
+                onmouseenter="evadeSubmit(this)" 
+                onmousedown="startGentleClick(event)" 
+                onmouseup="endGentleClick(event)"
+                style="padding: 14px 28px; font-size: 16px; position:relative;">
+                Envoyer mon dossier administratif 📨
+            </button>
+        </div>
+        <div id="click-force-msg" style="text-align:center; font-size:12px; color:#666; margin-top:5px;">
+            Astuce : Le bouton est timide, caressez-le en maintenant le clic entre 1.0 et 1.8 seconde.
+        </div>
+    </div>
+
+</div>
+
+<!-- Gérard l'assistant flottant -->
+<div id="gerard-assistant">
+    <div class="gerard-avatar" onclick="pokeGerard()" title="Cliquez pour agacer Gérard">📎</div>
+    <div class="gerard-bubble">
+        <div class="gerard-name">Gérard — Inspecteur Ergonomique</div>
+        <div id="gerard-text">Bonjour ! Je vois que vous tentez d'utiliser cette page. Avez-vous pensé à desserrer le frein à main avant de scroller ?</div>
+    </div>
+</div>
+
+<!-- Modal de Cookies Infernale -->
+<div id="cookie-modal">
+    <div class="cookie-box">
+        <h3 style="margin-top:0; color:var(--blue);">🍪 Gestion Obligatoire des Biscuits Numériques</h3>
+        <p style="font-size:14px; line-height:1.5; color:#444;">
+            Nous utilisons des cookies lourds (au beurre salé) pour ralentir votre curseur, juger vos fautes de frappe et revendre votre historique de clics à des éleveurs de lamas.
+        </p>
+        <div style="background:#f8f9fa; padding:10px; border-radius:6px; font-size:12px; margin-bottom:15px;">
+            <label><input type="checkbox" checked disabled> Cookies strictement inutiles mais obligatoires</label><br>
+            <label><input type="checkbox" checked id="cookie-spy"> Autoriser Gérard à commenter vos actions en direct</label>
+        </div>
+        <div class="cookie-actions">
+            <button type="button" class="secondary" id="refuse-cookie-btn" onmouseenter="runawayCookieBtn(this)" onclick="refuseCookies()">
+                Tout refuser (Non recommandé)
+            </button>
+            <button type="button" onclick="acceptCookies()">
+                Accepter avec enthousiasme ✨
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Menu Contextuel (Clic Droit) -->
+<div id="custom-context">
+    <div class="ctx-item" onclick="ctxAction('tax')"><span>Effectuer un clic droit</span> <strong>0,50 €</strong></div>
+    <div class="ctx-item" onclick="ctxAction('flip')"><span>Retourner la page à 180°</span> <span>🔄</span></div>
+    <div class="ctx-item" onclick="ctxAction('honk')"><span>Klaxonner d'agacement</span> <span>📯</span></div>
+    <div class="ctx-item" onclick="ctxAction('apologize')"><span>S'excuser auprès du serveur</span> <span>🙇</span></div>
+</div>
+
+<!-- Modal Finale : File d'attente immobile -->
+<div id="queue-modal">
+    <div class="ticket-box">
+        <h2 style="color:var(--blue); margin-top:0;">🎉 DOSSIER PRESQUE REÇU !</h2>
+        <p>Vous êtes placé en file d'attente prioritaire :</p>
+        <div style="font-size:42px; font-weight:900; color:var(--red); margin:15px 0;">
+            Position n° <span id="queue-pos">482</span>
+        </div>
+        <p style="font-size:13px; background:#fff3cd; padding:10px; border-radius:6px; color:#664d03;">
+            ⚠️ <strong>RÈGLE D'IMMOBILITÉ STRICTE :</strong> Ne bougez plus votre souris ! Tout mouvement de curseur est interprété comme une tentative de resquiller et vous fait reculer dans la file.
+        </p>
+        <div id="queue-warning" style="color:var(--red); font-weight:bold; min-height:20px; font-size:13px; margin-top:10px;"></div>
+        <button type="button" onclick="closeQueueModal()" style="margin-top:15px;">Abandonner ma place et revenir au formulaire</button>
+    </div>
+</div>
+
+<script>
+    /* ==========================================
+       1. SYNTHÉTISEUR AUDIO (Web Audio API)
+       ========================================== */
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }
+
+    function playSound(type) {
+        if (!soundEnabled) return;
+        initAudio();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+
+        if (type === 'boing') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(180, now);
+            osc.frequency.exponentialRampToValueAtTime(580, now + 0.18);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+            osc.start(now);
+            osc.stop(now + 0.2);
+        } else if (type === 'error') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(130, now);
+            osc.frequency.setValueAtTime(95, now + 0.12);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.linearRampToValueAtTime(0.01, now + 0.28);
+            osc.start(now);
+            osc.stop(now + 0.28);
+        } else if (type === 'pump') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(120, now);
+            osc.frequency.linearRampToValueAtTime(300, now + 0.1);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+            osc.start(now);
+            osc.stop(now + 0.12);
+        } else if (type === 'honk') {
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(240, now);
+            osc.frequency.setValueAtTime(310, now + 0.08);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
+            osc.start(now);
+            osc.stop(now + 0.35);
+        }
+    }
+
+    function toggleAudio() {
+        soundEnabled = !soundEnabled;
+        document.getElementById('mute-btn').innerText = soundEnabled ? "🔔 Son : Activé" : "🔕 Son : Coupé (Gérard boude)";
+        gerardSay(soundEnabled ? "Ah ! Vous m'entendez à nouveau !" : "Vous m'avez coupé le sifflet, mais je continue de vous juger visuellement.");
+    }
+
+    /* ==========================================
+       2. ASSISTANT GÉRARD & QUOTA DE CLICS
+       ========================================== */
+    function gerardSay(msg) {
+        const box = document.getElementById('gerard-text');
+        box.style.opacity = 0;
+        setTimeout(() => {
+            box.innerText = msg;
+            box.style.opacity = 1;
+        }, 120);
+    }
+
+    function pokeGerard() {
+        playSound('honk');
+        const quotes = [
+            "Aïe ! Ne me touchez pas avec ce curseur non désinfecté !",
+            "Saviez-vous que 94% des utilisateurs abandonnent avant la case du téléphone ?",
+            "Vous cliquez avec beaucoup d'agressivité aujourd'hui.",
+            "Je suis payé au prorata du temps que vous perdez sur cette page."
+        ];
+        gerardSay(quotes[Math.floor(Math.random() * quotes.length)]);
+    }
+
+    let clickQuota = 25;
+    document.addEventListener('click', (e) => {
+        document.getElementById('custom-context').style.display = 'none';
+        clickQuota--;
+        const quotaEl = document.getElementById('click-quota');
+        quotaEl.innerText = clickQuota;
+
+        // Fait tomber un boulon visuel tous les 6 clics
+        if (Math.abs(clickQuota) % 6 === 0) {
+            spawnFallingScrew(e.clientX, e.clientY);
+        }
+
+        if (clickQuota === 0) {
+            playSound('error');
+            gerardSay("⚠️ Vous avez épuisé votre forfait de 25 clics gratuits ! Les clics suivants seront facturés en karma.");
+        }
+    });
+
+    function spawnFallingScrew(x, y) {
+        const el = document.createElement('div');
+        el.className = 'falling-screw';
+        el.innerText = ['🔩', '⚙️', '📎', '🪫'][Math.floor(Math.random() * 4)];
+        el.style.left = x + 'px';
+        el.style.top = y + 'px';
+        document.body.appendChild(el);
+
+        requestAnimationFrame(() => {
+            el.style.top = (window.innerHeight + 50) + 'px';
+            el.style.transform = `rotate(${Math.random() * 720 - 360}deg)`;
+        });
+        setTimeout(() => el.remove(), 1100);
+    }
+
+    /* ==========================================
+       3. COOKIE MODAL INFERNALE
+       ========================================== */
+    let cookieRefuseTries = 0;
+    function runawayCookieBtn(btn) {
+        if (cookieRefuseTries < 4) {
+            cookieRefuseTries++;
+            playSound('boing');
+            const x = (Math.random() * 240) - 120;
+            const y = (Math.random() * 140) - 70;
+            btn.style.transform = `translate(${x}px, ${y}px)`;
+            const labels = [
+                "Oups, raté !",
+                "Vraiment refuser ?",
+                "Attention aux crampes !",
+                "Bon, d'accord, cliquez..."
+            ];
+            btn.innerText = labels[cookieRefuseTries - 1];
+        }
+    }
+
+    function refuseCookies() {
+        playSound('error');
+        alert("Erreur 418 : Le serveur de refus des cookies est actuellement en grève illimitée. Les cookies au beurre ont été acceptés par défaut.");
+        acceptCookies();
+    }
+
+    function acceptCookies() {
+        playSound('pump');
+        document.getElementById('cookie-modal').style.display = 'none';
+        gerardSay("Parfait, vos cookies sont au four ! Commencez par remplir votre identité (surveillez votre niveau d'encre).");
+    }
+
+    /* ==========================================
+       4. FREIN À MAIN DE SCROLL & PENTE À 14%
+       ========================================== */
+    let handbrakeOn = true;
+    let wedgePlaced = false;
+    let lockedScrollY = 0;
+    let isForcingScroll = false;
+
+    function toggleHandbrake() {
+        handbrakeOn = !handbrakeOn;
+        const handle = document.getElementById('handbrake-handle');
+        if (handbrakeOn) {
+            lockedScrollY = window.scrollY;
+            handle.classList.remove('released');
+            handle.innerText = "SERRÉ (BLOQUÉ)";
+            playSound('pump');
+            gerardSay("Frein à main serré ! La page est immobilisée.");
+        } else {
+            handle.classList.add('released');
+            handle.innerText = "DESSERRÉ (LIBRE)";
+            playSound('boing');
+            gerardSay(wedgePlaced 
+                ? "Frein desserré ! Heureusement que vous avez mis la cale." 
+                : "Frein desserré ! Attention, la page est garée en côte, elle glisse vers le haut !");
+        }
+    }
+
+    function toggleWedge() {
+        wedgePlaced = !wedgePlaced;
+        const btn = document.getElementById('wedge-btn');
+        playSound('pump');
+        if (wedgePlaced) {
+            btn.innerText = "📐 Retirer la cale";
+            btn.style.background = "#2b9348";
+            gerardSay("Cale en bois installée sous la fenêtre ! La page ne glissera plus toute seule.");
+        } else {
+            btn.innerText = "📐 Mettre une cale";
+            btn.style.background = "#f77f00";
+            gerardSay("Vous avez retiré la cale ! Gare à la pente !");
+        }
+    }
+
+    window.addEventListener('scroll', () => {
+        if (isForcingScroll) return;
+
+        if (handbrakeOn && Math.abs(window.scrollY - lockedScrollY) > 5) {
+            isForcingScroll = true;
+            window.scrollTo(0, lockedScrollY);
+            document.body.classList.add('shake');
+            playSound('error');
+            gerardSay("🚨 ARRÊTEZ ! Vous essayez de scroller avec le frein à main serré ! Vous allez brûler l'embrayage de la barre de défilement !");
+            setTimeout(() => {
+                document.body.classList.remove('shake');
+                isForcingScroll = false;
+            }, 350);
+        }
+    });
+
+    // Effet de pente : si le frein est desserré et pas de cale, la page remonte toute seule
+    setInterval(() => {
+        if (!handbrakeOn && !wedgePlaced && window.scrollY > 0) {
+            isForcingScroll = true;
+            window.scrollBy(0, -3);
+            setTimeout(() => { isForcingScroll = false; }, 20);
+        }
+    }, 35);
+
+    /* ==========================================
+       5. VOLUME = INCLINAISON DE LA PAGE
+       ========================================== */
+    const volSlider = document.getElementById('volume-slider');
+    volSlider.addEventListener('input', (e) => {
+        const val = e.target.value;
+        document.documentElement.style.setProperty('--tilt', val + 'deg');
+        document.getElementById('volume-label').innerText = val + '°';
+        gerardSay(`Ah oui, le curseur de volume règle l'inclinaison géométrique du site (${val}°). C'est une norme européenne.`);
+    });
+
+    /* ==========================================
+       6. IDENTITÉ : POMPE À ENCRE & AUTOCORRECT
+       ========================================== */
+    let inkLevel = 100;
+    let autocorrectTimer = null;
+    const nameInput = document.getElementById('name-input');
+
+    nameInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' || e.key === 'Tab') return;
+
+        if (inkLevel <= 0) {
+            e.preventDefault();
+            playSound('error');
+            gerardSay("🖨️ Plus d'encre dans le clavier ! Pompez sur le bouton bleu à droite pour recharger le toner.");
+            return;
+        }
+
+        // Diminue l'encre
+        inkLevel = Math.max(0, inkLevel - 16);
+        updateInkUI();
+
+        // Mode clavier "Lendemain de soirée"
+        if (document.getElementById(' anarchy-keys').checked && e.key.length === 1) {
+            e.preventDefault();
+            const drunkChars = "🤪🍷🫧?!§@#&éèçà";
+            nameInput.value += drunkChars[Math.floor(Math.random() * drunkChars.length)];
+        }
+
+        // Autocorrect absurde après une pause
+        clearTimeout(autocorrectTimer);
+        if (document.getElementById('autocorrect-cb').checked) {
+            autocorrectTimer = setTimeout(applyTrollAutocorrect, 1100);
+        }
+    });
+
+    function updateInkUI() {
+        document.getElementById('ink-fill').style.width = inkLevel + '%';
+        const opacity = Math.max(0.12, inkLevel / 100);
+        document.documentElement.style.setProperty('--ink-opacity', opacity);
+    }
+
+    function pumpInk() {
+        inkLevel = Math.min(100, inkLevel + 35);
+        updateInkUI();
+        playSound('pump');
+        gerardSay("Pschht ! Pression d'encre rétablie à " + inkLevel + "%.");
+    }
+
+    function applyTrollAutocorrect() {
+        const val = nameInput.value.trim();
+        if (val.length < 3 || val.includes("dit «")) return;
+        const titles = [
+            "dit « Le Sanglier des Ardennes »",
+            "(Sous tutelle ergonomique)",
+            "Junior-Senior III",
+            "de la Compta",
+            "— Fan de Céline Dion"
+        ];
+        const chosen = titles[Math.floor(Math.random() * titles.length)];
+        nameInput.value = val + " " + chosen;
+        playSound('boing');
+        gerardSay("✨ Correction Orthographique IA : Votre nom manquait de panache, nous l'avons enrichi.");
+    }
+
+    function toggleAutocorrect(cb) {
+        if (!cb.checked) {
+            gerardSay("Vous désactivez l'IA ? Dommage, elle voulait vous appeler 'Jean-Barnabé du Cosmos'.");
+        }
+    }
+
+    /* ==========================================
+       7. ANNÉE DE NAISSANCE PAR ORDRE ALPHABÉTIQUE
+       ========================================== */
+    function numberToFrenchWords(year) {
+        const units = ["", "un", "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf", "dix", "onze", "douze", "treize", "quatorze", "quinze", "seize", "dix-sept", "dix-huit", "dix-neuf"];
+        const tens = ["", "", "vingt", "trente", "quarante", "cinquante", "soixante", "soixante", "quatre-vingt", "quatre-vingt"];
+
+        function convertTwoDigits(n) {
+            if (n === 0) return "";
+            if (n < 20) return units[n];
+            const t = Math.floor(n / 10);
+            const u = n % 10;
+            if (t === 7 || t === 9) {
+                const rem = 10 + u;
+                const sep = (t === 7 && u === 1) ? " et " : "-";
+                return tens[t] + sep + units[rem];
+            } else {
+                const sep = (u === 1 && t !== 8) ? " et " : (u > 0 ? "-" : "");
+                const plural = (t === 8 && u === 0) ? "s" : "";
+                return tens[t] + plural + sep + units[u];
+            }
+        }
+
+        if (year >= 2000) {
+            const rem = year - 2000;
+            return ("Deux mille " + convertTwoDigits(rem)).trim();
+        } else {
+            const rem = year - 1900;
+            return ("Mille neuf cent " + convertTwoDigits(rem)).trim();
+        }
+    }
+
+    function populateBirthYears() {
+        const select = document.getElementById('birth-year');
+        const list = [];
+        for (let y = 1945; y <= 2025; y++) {
+            list.push({ num: y, text: numberToFrenchWords(y) });
+        }
+        // Tri strictement alphabétique !
+        list.sort((a, b) => a.text.localeCompare(b.text, 'fr'));
+
+        list.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item.num;
+            opt.textContent = item.text;
+            select.appendChild(opt);
+        });
+    }
+    populateBirthYears();
+
+    function onYearChange(sel) {
+        if (sel.value) {
+            playSound('boing');
+            gerardSay(`Vous êtes né en ${sel.value} ? Je vous aurais donné au moins 12 ans de plus vu la vitesse de votre souris.`);
+        }
+    }
+
+    /* ==========================================
+       8. TÉLÉPHONE ÉOLIEN (VENT SUR LE SLIDER)
+       ========================================== */
+    let windowOpen = true;
+    const phoneSlider = document.getElementById('phone-slider');
+
+    function formatPhone(num) {
+        const str = "0" + num.toString();
+        return str.replace(/(\d{2})(?=\d)/g, "$1 ");
+    }
+
+    function updatePhoneFromSlider() {
+        document.getElementById('phone-display').innerText = formatPhone(phoneSlider.value);
+    }
+
+    function blowOnPhone(delta) {
+        playSound('pump');
+        phoneSlider.value = parseInt(phoneSlider.value) + delta;
+        updatePhoneFromSlider();
+    }
+
+    function toggleWindow() {
+        windowOpen = !windowOpen;
+        const status = document.getElementById('window-status');
+        const btn = document.getElementById('window-btn');
+        playSound('boing');
+        if (windowOpen) {
+            status.innerText = "🪟 Fenêtre ouverte (Courant d'air !)";
+            status.style.color = "var(--red)";
+            btn.innerText = "Fermer la fenêtre 🪟";
+            gerardSay("Vous avez rouvert la fenêtre ! Le vent recommence à pousser votre numéro de téléphone.");
+        } else {
+            status.innerText = "🔒 Fenêtre fermée (Calme plat)";
+            status.style.color = "#2b9348";
+            btn.innerText = "Ouvrir la fenêtre pour aérer 🪟";
+            gerardSay("Fenêtre fermée ! Votre numéro de téléphone est désormais à l'abri des courants d'air.");
+        }
+    }
+
+    // Le vent pousse le numéro en continu si la fenêtre est ouverte
+    setInterval(() => {
+        if (windowOpen) {
+            phoneSlider.value = parseInt(phoneSlider.value) + 247;
+            updatePhoneFromSlider();
+        }
+    }, 180);
+
+    /* ==========================================
+       9. MOT DE PASSE & AFFICHAGE GÉANT
+       ========================================== */
+    function checkPassword(val) {
+        const billboard = document.getElementById('password-billboard');
+        const billboardText = document.getElementById('billboard-text');
+
+        if (val.length > 0) {
+            billboard.style.display = 'block';
+            billboardText.innerText = val;
+        } else {
+            billboard.style.display = 'none';
+        }
+
+        document.getElementById('pwd-len').innerText = val.length;
+
+        // Règle 1 : Voyelle majuscule
+        const r1 = /[AEIOUY]/.test(val);
+        setRuleState('rule-1', r1);
+
+        // Règle 2 : MOUTARDE ou synonyme d'angoisse
+        const r2 = /(moutarde|angoisse|lundi|impots|caf|gerard)/i.test(val);
+        setRuleState('rule-2', r2);
+
+        // Règle 3 : Ponctuation
+        const r3 = /(\.\.\.|!|\?)/.test(val);
+        setRuleState('rule-3', r3);
+
+        // Règle 4 : Longueur impaire
+        const r4 = val.length > 0 && (val.length % 2 === 1);
+        setRuleState('rule-4', r4);
+    }
+
+    function setRuleState(id, valid) {
+        const el = document.getElementById(id);
+        el.className = valid ? 'valid' : 'invalid';
+    }
+
+    /* ==========================================
+       10. CAPTCHA PSYCHOLOGIQUE
+       ========================================== */
+    function selectCaptcha(el, isCorrect) {
+        el.classList.toggle('selected');
+        if (!isCorrect && el.classList.contains('selected')) {
+            playSound('error');
+            gerardSay("Erreur d'empathie : Cet emoji déborde d'assurance, regardez son sourire arrogant !");
+        } else if (isCorrect && el.classList.contains('selected')) {
+            playSound('boing');
+            gerardSay("Bien vu ! Celui-ci est clairement au bord du burn-out.");
+        }
+    }
+
+    let captchaFleeCount = 0;
+    function fleeCaptcha(el) {
+        if (captchaFleeCount < 3) {
+            captchaFleeCount++;
+            playSound('boing');
+            const x = (Math.random() * 80) - 40;
+            const y = (Math.random() * 50) - 25;
+            el.style.transform = `translate(${x}px, ${y}px)`;
+        }
+    }
+
+    /* ==========================================
+       11. TRIANGLE DES CGU & BOUTON FINAL
+       ========================================== */
+    function handleCguTriangle(num) {
+        const c1 = document.getElementById('cgu-1');
+        const c2 = document.getElementById('cgu-2');
+        const c3 = document.getElementById('cgu-3');
+        const lieBox = document.getElementById('lie-detector');
+
+        if (num === 1 && c1.checked) {
+            lieBox.style.display = 'block';
+            playSound('error');
+        }
+
+        // Triangle infernal : si les 3 sont cochées, décoche une au hasard
+        if (c1.checked && c2.checked && c3.checked) {
+            playSound('boing');
+            if (num === 1) c3.checked = false;
+            else if (num === 2) c1.checked = false;
+            else c2.checked = false;
+            gerardSay("⚖️ Paradoxe juridique : La loi interdit de cocher ces 3 cases simultanément. Choisissez vos 2 préférées !");
+        }
+    }
+
+    let submitEvades = 0;
+    function evadeSubmit(btn) {
+        if (submitEvades < 2) {
+            submitEvades++;
+            playSound('boing');
+            const offset = submitEvades % 2 === 0 ? -130 : 130;
+            btn.style.transform = `translateX(${offset}px)`;
+            gerardSay("Oups ! Le bouton d'envoi a eu un mouvement de recul. Approchez-vous plus doucement !");
+        } else {
+            btn.style.transform = `translateX(0px)`;
+        }
+    }
+
+    let pressStartTime = 0;
+    function startGentleClick(e) {
+        pressStartTime = Date.now();
+        document.getElementById('click-force-msg').innerText = "⏳ Maintenez doucement... Pas trop vite, pas trop longtemps...";
+    }
+
+    function endGentleClick(e) {
+        const duration = (Date.now() - pressStartTime) / 1000;
+        const msg = document.getElementById('click-force-msg');
+
+        if (duration < 0.7) {
+            playSound('error');
+            msg.innerHTML = `<strong style="color:var(--red)">❌ Clic trop brutal (${duration.toFixed(2)}s) !</strong> Vous avez brusqué le bouton. Maintenez entre 0.8s et 2.2s.`;
+            gerardSay("Plus doucement ! C'est un formulaire administratif, pas un marteau-piqueur !");
+        } else if (duration > 2.5) {
+            playSound('error');
+            msg.innerHTML = `<strong style="color:var(--red)">❌ Clic trop mou (${duration.toFixed(2)}s) !</strong> Vous vous êtes endormi sur la souris.`;
+        } else {
+            playSound('honk');
+            openQueueModal();
+        }
+    }
+
+    /* ==========================================
+       12. MENU CLIC DROIT & FILE D'ATTENTE
+       ========================================== */
+    document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        playSound('boing');
+        const menu = document.getElementById('custom-context');
+        menu.style.display = 'block';
+        menu.style.left = Math.min(e.clientX, window.innerWidth - 250) + 'px';
+        menu.style.top = Math.min(e.clientY, window.innerHeight - 160) + 'px';
+    });
+
+    let isFlipped = false;
+    function ctxAction(act) {
+        if (act === 'tax') {
+            alert("Merci ! 0,50 € ont été débités de votre forfait moral pour ce clic droit.");
+        } else if (act === 'flip') {
+            isFlipped = !isFlipped;
+            document.documentElement.style.setProperty('--tilt', isFlipped ? '180deg' : '0deg');
+        } else if (act === 'honk') {
+            playSound('honk');
+            gerardSay("📯 POUET ! Oui, ça soulage, n'est-ce pas ?");
+        } else if (act === 'apologize') {
+            gerardSay("Le serveur accepte vos excuses, mais reste sur ses gardes.");
+        }
+    }
+
+    let queueActive = false;
+    let queuePos = 482;
+
+    function openQueueModal() {
+        queueActive = true;
+        queuePos = 482;
+        document.getElementById('queue-pos').innerText = queuePos;
+        document.getElementById('queue-modal').style.display = 'flex';
+    }
+
+    function closeQueueModal() {
+        queueActive = false;
+        document.getElementById('queue-modal').style.display = 'none';
+        gerardSay("Vous avez quitté la file d'attente ! Il ne vous restait pourtant que 47 heures à patienter.");
+    }
+
+    document.addEventListener('mousemove', () => {
+        if (queueActive) {
+            queuePos += 3;
+            document.getElementById('queue-pos').innerText = queuePos;
+            document.getElementById('queue-warning').innerText = "🚨 MOUVEMENT DE SOURIS DÉTECTÉ ! Pénalité : +3 places !";
+        }
+    });
+</script>
+
+</body>
+</html>
