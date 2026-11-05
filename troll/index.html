@@ -3,1355 +3,1126 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portail CERFA-404 — Homologation Officielle de Navigation</title>
+<title>SwiftDrop — 1 fichier partagé avec vous (48,4 Mo)</title>
 <style>
     :root {
-        --blue: #000091;
-        --red: #e1000f;
-        --bg: #f4f6f9;
-        --card: #ffffff;
-        --text: #1e1e1e;
-        --border: #d0d7de;
-        --tilt: 0deg;
-        --ink-opacity: 1;
+        --primary: #2563eb;
+        --primary-hover: #1d4ed8;
+        --bg: #f8fafc;
+        --surface: #ffffff;
+        --text: #0f172a;
+        --muted: #64748b;
+        --border: #e2e8f0;
+        --danger: #dc2626;
+        --danger-bg: #fef2f2;
+        --success: #16a34a;
+        --warning: #d97706;
+        --warning-bg: #fffbeb;
     }
 
     * {
         box-sizing: border-box;
-        user-select: none;
+        font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
     }
 
     body {
         margin: 0;
         padding: 0;
-        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         background-color: var(--bg);
         color: var(--text);
-        overflow-x: hidden;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        -webkit-font-smoothing: antialiased;
     }
 
-    /* Le wrapper qui tourne sans casser les éléments position: fixed */
-    #page-wrapper {
-        transition: transform 0.2s ease-out;
-        transform: rotate(var(--tilt));
-        transform-origin: center top;
-        padding-bottom: 350px;
-    }
-
-    /* Bandeau d'affichage géant du mot de passe */
-    #password-billboard {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 9000;
-        background: #111;
-        color: #00ff66;
-        font-family: 'Courier New', monospace;
-        padding: 8px 15px;
-        text-align: center;
-        font-size: 14px;
-        border-bottom: 3px solid #00ff66;
-        display: none;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    }
-    #password-billboard span {
-        font-size: 22px;
-        font-weight: bold;
-        color: #ff0055;
-        background: #fff;
-        padding: 2px 8px;
-        border-radius: 4px;
-        margin-left: 8px;
-        letter-spacing: 2px;
-    }
-
-    /* Header Officiel Parodique */
-    header {
-        background: #fff;
-        border-bottom: 4px solid var(--blue);
-        padding: 15px 30px;
+    /* Navbar ultra-clean */
+    nav {
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        padding: 14px 32px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        position: relative;
-        flex-wrap: wrap;
-        gap: 15px;
     }
 
-    .marianne-box {
+    .brand {
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 18px;
+        color: var(--text);
+        letter-spacing: -0.4px;
     }
 
-    .flag {
-        width: 45px;
+    .brand-icon {
+        width: 30px;
         height: 30px;
-        background: linear-gradient(90deg, #000091 33%, #fff 33%, #fff 66%, #e1000f 66%);
-        border: 1px solid #ccc;
-    }
-
-    .gov-title {
-        font-weight: 800;
-        font-size: 14px;
-        line-height: 1.1;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    .gov-sub {
-        font-size: 11px;
-        color: #666;
-        font-style: italic;
-    }
-
-    /* Barre d'outils absurde */
-    .control-bar {
-        display: flex;
-        gap: 20px;
-        align-items: center;
-        background: #eef1f6;
-        padding: 10px 15px;
+        background: var(--primary);
+        color: #fff;
         border-radius: 8px;
-        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+    }
+
+    .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 16px;
         font-size: 13px;
+        color: var(--muted);
     }
 
-    .control-item {
+    .notif-pill {
+        background: #f1f5f9;
+        border: 1px solid var(--border);
+        padding: 5px 10px;
+        border-radius: 20px;
+        cursor: pointer;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
+        font-weight: 500;
+        color: var(--text);
+        transition: background 0.15s;
+    }
+    .notif-pill:hover { background: #e2e8f0; }
+    .notif-badge {
+        background: var(--danger);
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 1px 6px;
+        border-radius: 10px;
     }
 
-    /* Conteneur Principal */
-    .container {
-        max-width: 760px;
-        margin: 40px auto;
-        padding: 0 20px;
-    }
-
-    .alert-slope {
-        background: #fff3cd;
-        border-left: 5px solid #ffecb5;
-        border: 1px solid #ffe69c;
-        color: #664d03;
-        padding: 12px 15px;
-        border-radius: 6px;
-        margin-bottom: 20px;
+    /* Main Container */
+    main {
+        flex: 1;
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        font-size: 14px;
+        justify-content: center;
+        padding: 30px 16px;
     }
 
     .card {
-        background: var(--card);
+        background: var(--surface);
         border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 25px;
-        margin-bottom: 25px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-        position: relative;
-        transition: all 0.3s ease;
-    }
-
-    .card h2 {
-        margin-top: 0;
-        font-size: 18px;
-        color: var(--blue);
-        border-bottom: 2px solid #f0f0f0;
-        padding-bottom: 10px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .badge {
-        font-size: 11px;
-        background: #ffe3e3;
-        color: var(--red);
-        padding: 3px 8px;
-        border-radius: 12px;
-        font-weight: 600;
-    }
-
-    .form-group {
-        margin-bottom: 18px;
-    }
-
-    label {
-        display: block;
-        font-weight: 600;
-        margin-bottom: 6px;
-        font-size: 14px;
-    }
-
-    input[type="text"], input[type="password"], select {
+        border-radius: 14px;
         width: 100%;
-        padding: 10px 12px;
-        border: 2px solid #ccc;
-        border-radius: 6px;
-        font-size: 15px;
-        transition: all 0.2s;
-    }
-
-    /* Jauge d'encre */
-    #name-input {
-        color: rgba(0, 0, 50, var(--ink-opacity));
-        font-family: 'Courier New', monospace;
-        font-weight: bold;
-    }
-
-    .ink-bar-container {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-top: 8px;
-        background: #f8f9fa;
-        padding: 8px;
-        border-radius: 6px;
-        border: 1px dashed #ccc;
-    }
-
-    .ink-meter {
-        flex-grow: 1;
-        height: 12px;
-        background: #e9ecef;
-        border-radius: 6px;
+        max-width: 480px;
+        box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.06), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
         overflow: hidden;
+        transition: all 0.2s ease;
     }
 
-    .ink-fill {
-        height: 100%;
-        width: 100%;
-        background: linear-gradient(90deg, #000091, #4dabf7);
-        transition: width 0.2s;
+    .card-header {
+        padding: 24px 28px 18px;
+        border-bottom: 1px solid var(--border);
     }
 
-    button {
-        cursor: pointer;
-        padding: 8px 14px;
-        border-radius: 6px;
-        border: 1px solid var(--blue);
-        background: var(--blue);
-        color: #fff;
-        font-weight: 600;
+    .file-preview {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        background: #f8fafc;
+        border: 1px solid var(--border);
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-top: 12px;
+    }
+
+    .file-icon {
+        width: 42px;
+        height: 42px;
+        background: #dbeafe;
+        color: var(--primary);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
         font-size: 13px;
-        transition: transform 0.1s, background 0.2s;
-    }
-
-    button:hover {
-        background: #1212ff;
-    }
-
-    button.secondary {
-        background: #fff;
-        color: var(--blue);
-    }
-
-    button.secondary:hover {
-        background: #f0f4ff;
-    }
-
-    /* Frein à main de scroll (Fixe à droite de l'écran) */
-    .handbrake-panel {
-        position: fixed;
-        right: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: #2b2d42;
-        color: #fff;
-        padding: 15px;
-        border-radius: 12px;
-        width: 155px;
-        text-align: center;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-        z-index: 8000;
-        border: 3px solid #8d99ae;
-    }
-
-    .lever-box {
-        height: 90px;
-        background: #1a1b28;
-        margin: 10px 0;
-        border-radius: 8px;
-        position: relative;
-        cursor: pointer;
-        border: 1px inset #555;
-    }
-
-    .lever-handle {
-        width: 84%;
-        height: 28px;
-        background: var(--red);
-        border-radius: 6px;
-        position: absolute;
-        left: 8%;
-        top: 8px;
-        transition: top 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 11px;
-        font-weight: bold;
-        box-shadow: 0 4px 0 #900;
-    }
-
-    .lever-handle.released {
-        top: 52px;
-        background: #2b9348;
-        box-shadow: 0 4px 0 #1b5e2e;
-    }
-
-    /* Téléphone éolien */
-    .wind-box {
-        background: #e3f2fd;
-        padding: 15px;
-        border-radius: 8px;
-        border: 1px solid #90caf9;
-    }
-
-    .phone-display {
-        font-size: 26px;
-        font-family: monospace;
-        font-weight: bold;
-        text-align: center;
-        letter-spacing: 3px;
-        background: #fff;
-        padding: 10px;
-        border-radius: 6px;
-        border: 2px inset #ccc;
-        margin-bottom: 10px;
-    }
-
-    /* Captcha Émotionnel */
-    .captcha-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        margin-top: 10px;
-    }
-
-    .captcha-cell {
-        background: #f8f9fa;
-        border: 2px solid #dee2e6;
-        border-radius: 8px;
-        height: 85px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        font-size: 28px;
-        position: relative;
-        transition: transform 0.1s;
-    }
-
-    .captcha-cell span {
-        font-size: 11px;
-        color: #555;
-        margin-top: 4px;
-        text-align: center;
-    }
-
-    .captcha-cell.selected {
-        border-color: var(--blue);
-        background: #e7f5ff;
-    }
-
-    @keyframes nervous-shake {
-        0% { transform: translate(1px, 1px) rotate(0deg); }
-        25% { transform: translate(-2px, -1px) rotate(-2deg); }
-        50% { transform: translate(-1px, 2px) rotate(2deg); }
-        75% { transform: translate(2px, 1px) rotate(-1deg); }
-        100% { transform: translate(1px, -2px) rotate(1deg); }
-    }
-
-    .nervous:hover {
-        animation: nervous-shake 0.12s infinite;
-    }
-
-    /* Gérard l'Assistant (Clippy Parody) */
-    #gerard-assistant {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        display: flex;
-        align-items: flex-end;
-        gap: 12px;
-        z-index: 8500;
-        max-width: 360px;
-    }
-
-    .gerard-avatar {
-        width: 65px;
-        height: 65px;
-        background: #ffd166;
-        border: 3px solid #111;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 36px;
-        box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-        cursor: pointer;
         flex-shrink: 0;
-        animation: float 3s ease-in-out infinite;
     }
 
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-6px); }
+    .file-meta h4 {
+        margin: 0 0 3px 0;
+        font-size: 14px;
+        font-weight: 600;
+    }
+    .file-meta p {
+        margin: 0;
+        font-size: 12px;
+        color: var(--muted);
     }
 
-    .gerard-bubble {
-        background: #fff;
-        border: 2px solid #111;
-        border-radius: 14px 14px 14px 2px;
-        padding: 12px 15px;
-        font-size: 13px;
-        box-shadow: 4px 4px 0px #111;
+    .card-body {
+        padding: 24px 28px;
+    }
+
+    /* Bannière de Layout Shift (S'insère au moment du clic) */
+    #shift-banner {
+        display: none;
+        background: var(--warning-bg);
+        border: 1px solid #fde68a;
+        color: #92400e;
+        padding: 12px 14px;
+        border-radius: 8px;
+        font-size: 12.5px;
+        margin-bottom: 14px;
         line-height: 1.4;
     }
 
-    .gerard-name {
-        font-weight: 800;
-        font-size: 11px;
-        text-transform: uppercase;
-        color: var(--blue);
-        margin-bottom: 4px;
-    }
-
-    /* Cookie Banner infernal (Bien fixé sur la fenêtre) */
-    #cookie-modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0,0,0,0.65);
-        z-index: 9999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(3px);
-    }
-
-    .cookie-box {
-        background: #fff;
-        width: 90%;
-        max-width: 520px;
-        padding: 25px;
-        border-radius: 12px;
-        border-top: 8px solid var(--blue);
-        box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    .field {
+        margin-bottom: 18px;
         position: relative;
     }
 
-    .cookie-actions {
-        display: flex;
-        gap: 12px;
-        margin-top: 20px;
-        justify-content: flex-end;
-        position: relative;
-        min-height: 45px;
-    }
-
-    /* Menu contextuel clic droit */
-    #custom-context {
-        position: fixed;
-        background: #fff;
-        border: 2px solid #111;
-        box-shadow: 5px 5px 0 rgba(0,0,0,0.2);
-        border-radius: 6px;
-        padding: 6px 0;
-        z-index: 10000;
-        display: none;
-        width: 240px;
-        font-size: 13px;
-    }
-
-    .ctx-item {
-        padding: 8px 15px;
-        cursor: pointer;
+    label {
         display: flex;
         justify-content: space-between;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #334155;
     }
-    .ctx-item:hover {
-        background: var(--blue);
+
+    .label-hint {
+        font-weight: 400;
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    input[type="text"], select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 14px;
+        color: var(--text);
+        background: #fff;
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    input[type="text"]:focus, select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    input.error-border {
+        border-color: var(--danger) !important;
+        background: #fffafa;
+    }
+
+    .field-error {
+        color: var(--danger);
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
+        line-height: 1.35;
+    }
+
+    /* Radio buttons sournois */
+    .radio-group {
+        display: flex;
+        gap: 20px;
+        background: #f8fafc;
+        border: 1px solid var(--border);
+        padding: 10px 14px;
+        border-radius: 8px;
+    }
+
+    .radio-option {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 13.5px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    /* Scrollbox CGU */
+    .terms-box {
+        height: 78px;
+        overflow-y: scroll;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 11.5px;
+        color: var(--muted);
+        background: #f8fafc;
+        line-height: 1.5;
+        margin-bottom: 8px;
+    }
+
+    .checkbox-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        font-size: 13px;
+        color: #334155;
+    }
+
+    /* Vrai-Faux reCAPTCHA */
+    .recaptcha-box {
+        background: #f9f9f9;
+        border: 1px solid #d3d3d3;
+        border-radius: 4px;
+        padding: 12px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        margin-bottom: 18px;
+    }
+
+    .rc-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 14px;
+        color: #222;
+    }
+
+    .rc-checkbox {
+        width: 24px;
+        height: 24px;
+        border: 2px solid #c1c1c1;
+        border-radius: 2px;
+        background: #fff;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+    .rc-checkbox:hover { border-color: #b2b2b2; }
+
+    .rc-spinner {
+        width: 20px;
+        height: 20px;
+        border: 3px solid #e2e8f0;
+        border-top-color: #4285f4;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        display: none;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .rc-logo {
+        text-align: center;
+        font-size: 9px;
+        color: #555;
+        line-height: 1.1;
+    }
+    .rc-logo-icon {
+        font-size: 18px;
+        color: #4285f4;
+        display: block;
+        margin-bottom: 2px;
+    }
+
+    /* Fenêtre Challenge Grille 3x3 reCAPTCHA */
+    #rc-challenge {
+        display: none;
+        border: 1px solid #ccc;
+        background: #fff;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+        border-radius: 4px;
+        margin-bottom: 18px;
+        overflow: hidden;
+    }
+
+    .rc-header {
+        background: #1a73e8;
         color: #fff;
+        padding: 14px 16px;
+        font-size: 13px;
+    }
+    .rc-header strong {
+        display: block;
+        font-size: 18px;
+        margin: 2px 0;
     }
 
-    /* Effet de secousse d'écran */
-    @keyframes screen-shake {
-        0%, 100% { transform: translateX(0) rotate(var(--tilt)); }
-        20%, 60% { transform: translateX(-8px) rotate(var(--tilt)); }
-        40%, 80% { transform: translateX(8px) rotate(var(--tilt)); }
+    .rc-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 3px;
+        padding: 4px;
+        background: #fff;
     }
 
-    .shake {
-        animation: screen-shake 0.35s ease;
+    .rc-tile {
+        aspect-ratio: 1;
+        background: #e2e8f0;
+        position: relative;
+        cursor: pointer;
+        overflow: hidden;
+        user-select: none;
+        transition: transform 0.1s;
     }
 
-    /* Vis qui tombent quand on clique trop fort */
-    .falling-screw {
-        position: fixed;
-        font-size: 20px;
+    .rc-tile.selected {
+        transform: scale(0.86);
+        box-shadow: 0 0 0 3px #1a73e8;
+    }
+    .rc-tile.selected::after {
+        content: "✓";
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        width: 20px;
+        height: 20px;
+        background: #1a73e8;
+        color: #fff;
+        border-radius: 50%;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .rc-tile.fading {
         pointer-events: none;
-        z-index: 9500;
-        transition: top 1s cubic-bezier(0.55, 0.085, 0.68, 0.53), transform 1s linear;
+        animation: slowFade 3.4s ease-in-out forwards;
     }
 
-    /* Modal finale de file d'attente */
-    #queue-modal {
+    @keyframes slowFade {
+        0% { opacity: 1; }
+        45% { opacity: 0.05; }
+        90% { opacity: 0.15; }
+        100% { opacity: 1; }
+    }
+
+    .rc-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 12px;
+        border-top: 1px solid #e5e5e5;
+    }
+
+    /* Boutons */
+    .btn-primary {
+        width: 100%;
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        padding: 12px 18px;
+        border-radius: 8px;
+        font-size: 14.5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+    .btn-primary:hover { background: var(--primary-hover); }
+
+    .btn-danger-trap {
+        width: 100%;
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #cbd5e1;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        margin-bottom: 8px;
+        display: none;
+    }
+    .btn-danger-trap:hover {
+        background: #fee2e2;
+        color: var(--danger);
+        border-color: #fca5a5;
+    }
+
+    /* Barre de téléchargement 99% */
+    #download-screen {
+        display: none;
+        padding: 28px;
+        text-align: center;
+    }
+
+    .progress-track {
+        width: 100%;
+        height: 10px;
+        background: #e2e8f0;
+        border-radius: 99px;
+        overflow: hidden;
+        margin: 18px 0 10px;
+    }
+
+    .progress-bar {
+        height: 100%;
+        width: 0%;
+        background: var(--primary);
+        transition: width 0.25s ease;
+    }
+
+    /* Modal qui vole le focus pendant qu'on tape */
+    #focus-steal-modal {
         position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
-        background: rgba(0, 0, 80, 0.9);
-        color: #fff;
-        z-index: 10000;
+        background: rgba(15, 23, 42, 0.45);
+        z-index: 9999;
         display: none;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
-        text-align: center;
-        padding: 20px;
+        padding: 16px;
     }
 
-    .ticket-box {
+    .modal-card {
         background: #fff;
-        color: #111;
-        padding: 30px;
         border-radius: 12px;
-        max-width: 480px;
-        border: 4px dashed var(--red);
+        max-width: 390px;
+        width: 100%;
+        padding: 22px;
+        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);
+        border: 1px solid var(--border);
     }
 
-    .rules-list li {
+    /* Toast discret en bas à droite */
+    #toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #1e293b;
+        color: #fff;
+        padding: 12px 18px;
+        border-radius: 8px;
         font-size: 13px;
-        margin-bottom: 5px;
-        transition: color 0.2s;
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2);
+        display: none;
+        z-index: 9500;
+        max-width: 340px;
+        line-height: 1.4;
     }
-    .rules-list li.valid { color: #2b9348; text-decoration: line-through; }
-    .rules-list li.invalid { color: var(--red); font-weight: bold; }
 </style>
 </head>
 <body>
 
-<!-- Panneau géant qui affiche le mot de passe en clair -->
-<div id="password-billboard">
-    👁️ ASSISTANCE VISUELLE ANTI-FAUTES DE FRAPPE — VOTRE MOT DE PASSE ACTUEL EST : <span id="billboard-text"></span>
-</div>
-
-<!-- Conteneur principal soumis à l'inclinaison -->
-<div id="page-wrapper">
-
-    <!-- Header Administratif -->
-    <header>
-        <div class="marianne-box">
-            <div class="flag"></div>
-            <div>
-                <div class="gov-title">République du Clic<br>Ministère du Temps Perdu</div>
-                <div class="gov-sub">Formulaire Cerfa n°404-B — Homologation d'Utilisateur</div>
-            </div>
+<nav>
+    <div class="brand">
+        <div class="brand-icon">⬇</div>
+        <span>SwiftDrop</span>
+    </div>
+    <div class="nav-right">
+        <div class="notif-pill" onclick="clickNotif()">
+            <span>Notifications</span>
+            <span class="notif-badge" id="notif-count">1</span>
         </div>
+    </div>
+</nav>
 
-        <div class="control-bar">
-            <div class="control-item" title="Ajuste le volume sonore de la page">
-                <span>🔊 Volume :</span>
-                <input type="range" id="volume-slider" min="-8" max="8" value="0" step="1" style="width: 90px;">
-                <span id="volume-label">0°</span>
+<main>
+    <div class="card">
+        <div class="card-header">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:12px; font-weight:600; color:var(--primary); text-transform:uppercase; letter-spacing:0.5px;">Transfert sécurisé</span>
+                <span style="font-size:12px; color:var(--muted);">Expire dans <strong id="timer-display">14:59</strong></span>
             </div>
-            <div class="control-item">
-                <button class="secondary" id="mute-btn" onclick="toggleAudio()">🔔 Son : Activé</button>
-            </div>
-            <div class="control-item">
-                <span>Clics restants : <strong id="click-quota">25</strong></span>
-            </div>
-        </div>
-    </header>
-
-    <!-- Contenu Principal -->
-    <div class="container">
-
-        <div class="alert-slope">
-            <div>
-                <strong>⚠️ Attention :</strong> Cette page web est hébergée sur un serveur en pente (inclinaison de 14%). Si vous desserrez le frein à main (à droite) sans mettre de cale, la page remontera toute seule.
-            </div>
-        </div>
-
-        <!-- SECTION 1 : IDENTITÉ & ENCRE -->
-        <div class="card">
-            <h2>1. Déclaration d'Identité <span class="badge">Encre Certifiée</span></h2>
-            <div class="form-group">
-                <label for="name-input">Nom et Prénom (Attention à la pression d'encre du clavier) :</label>
-                <input type="text" id="name-input" placeholder="Tapez votre nom ici..." autocomplete="off">
-                
-                <div class="ink-bar-container">
-                    <span style="font-size: 12px; font-weight: bold;">🖨️ Niveau de toner :</span>
-                    <div class="ink-meter">
-                        <div class="ink-fill" id="ink-fill"></div>
-                    </div>
-                    <button type="button" onclick="pumpInk()">Pomper de l'encre ⛽</button>
-                </div>
-            </div>
-
-            <div class="form-group" style="display:flex; gap:15px; align-items:center; font-size:13px; flex-wrap:wrap;">
-                <label style="margin:0; cursor:pointer;">
-                    <input type="checkbox" id="autocorrect-cb" checked onchange="toggleAutocorrect(this)">
-                    Activer l'Amélioration Créative des Prénoms par IA
-                </label>
-                <label style="margin:0; cursor:pointer;">
-                    <input type="checkbox" id="anarchy-keys">
-                    Clavier en mode "Lendemain de soirée"
-                </label>
-            </div>
-        </div>
-
-        <!-- SECTION 2 : DATE DE NAISSANCE ALPHABÉTIQUE -->
-        <div class="card">
-            <h2>2. Millésime de Naissance <span class="badge">Tri Optimisé</span></h2>
-            <div class="form-group">
-                <label for="birth-year">Sélectionnez votre année de naissance (triée par ordre alphabétique strict pour plus d'équité) :</label>
-                <select id="birth-year" onchange="onYearChange(this)">
-                    <option value="">-- Veuillez chercher patiemment --</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- SECTION 3 : TÉLÉPHONE ÉOLIEN -->
-        <div class="card">
-            <h2>3. Coordonnées Téléphoniques <span class="badge">Météo Sensible</span></h2>
-            <div class="wind-box">
-                <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:8px;">
-                    <span>🌬️ <strong>Météo du formulaire :</strong> Vent d'Ouest (Force 4)</span>
-                    <span id="window-status" style="color:var(--red); font-weight:bold;">🪟 Fenêtre ouverte (Courant d'air !)</span>
-                </div>
-                <div class="phone-display" id="phone-display">06 12 34 56 78</div>
-                <input type="range" id="phone-slider" min="600000000" max="799999999" value="612345678" style="width:100%;" oninput="updatePhoneFromSlider()">
-                
-                <div style="display:flex; gap:10px; margin-top:10px; justify-content:center; flex-wrap:wrap;">
-                    <button type="button" class="secondary" onclick="blowOnPhone(-15432)">💨 Souffler à gauche</button>
-                    <button type="button" class="secondary" onclick="blowOnPhone(15432)">💨 Souffler à droite</button>
-                    <button type="button" id="window-btn" onclick="toggleWindow()">Fermer la fenêtre 🪟</button>
+            <div class="file-preview">
+                <div class="file-icon">ZIP</div>
+                <div class="file-meta">
+                    <h4>Dossier_Photos_Soiree.zip</h4>
+                    <p>48,4 Mo • Partagé aujourd'hui • Chiffrement standard</p>
                 </div>
             </div>
         </div>
 
-        <!-- SECTION 4 : MOT DE PASSE PARANOÏAQUE -->
-        <div class="card">
-            <h2>4. Sécurité Quantique <span class="badge">RGPD++</span></h2>
-            <div class="form-group">
-                <label for="pwd-input">Créez un mot de passe conforme aux exigences lunaires :</label>
-                <input type="password" id="pwd-input" placeholder="Mot de passe ultra-secret..." oninput="checkPassword(this.value)">
-                <ul class="rules-list" style="margin-top:10px; padding-left:20px;">
-                    <li id="rule-1" class="invalid">Doit contenir au moins une voyelle criée très fort (MAJUSCULE).</li>
-                    <li id="rule-2" class="invalid">Doit contenir le mot "MOUTARDE" ou un synonyme d'angoisse.</li>
-                    <li id="rule-3" class="invalid">Doit contenir un signe de ponctuation passif-agressif ("..." ou "!").</li>
-                    <li id="rule-4" class="invalid">La longueur du mot de passe doit être un nombre impair (actuel : <span id="pwd-len">0</span>).</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- SECTION 5 : CAPTCHA PSYCHOLOGIQUE -->
-        <div class="card">
-            <h2>5. Vérification d'Humanité <span class="badge">Test de Turing Émotionnel</span></h2>
-            <p style="font-size:14px; margin-top:0;">
-                Prouvez que vous n'êtes pas un robot : <strong>Cliquez uniquement sur les éléments qui manquent cruellement de confiance en eux.</strong>
+        <!-- FORMULAIRE D'ACCÈS -->
+        <div class="card-body" id="form-screen">
+            <p style="margin:0 0 18px 0; font-size:13.5px; color:#475569; line-height:1.45;">
+                L'expéditeur a activé la protection anti-bot. Veuillez confirmer votre accès ci-dessous pour démarrer le téléchargement direct.
             </p>
-            <div class="captcha-grid">
-                <div class="captcha-cell" onclick="selectCaptcha(this, false)">😎<span>Sûr de lui</span></div>
-                <div class="captcha-cell nervous" onclick="selectCaptcha(this, true)">😰<span>Tremble au survol</span></div>
-                <div class="captcha-cell" onclick="selectCaptcha(this, false)">🗿<span>Impassible</span></div>
-                <div class="captcha-cell" onclick="selectCaptcha(this, false)">🚀<span>Ambitieux</span></div>
-                <div class="captcha-cell nervous" onclick="selectCaptcha(this, true)">🥺<span>Regard fuyant</span></div>
-                <div class="captcha-cell" id="fleeing-captcha" onmouseenter="fleeCaptcha(this)" onclick="selectCaptcha(this, true)">🏃<span>Phobie des souris</span></div>
-            </div>
-        </div>
 
-        <!-- SECTION 6 : CGU & SOUMISSION -->
-        <div class="card">
-            <h2>6. Consentement Mutuel & Validation <span class="badge">Étape Finale</span></h2>
-            <div class="form-group" style="font-size:14px; line-height:1.8;">
-                <label style="cursor:pointer;">
-                    <input type="checkbox" id="cgu-1" onchange="handleCguTriangle(1)">
-                    J'ai lu, compris et appris par cœur les 4 820 pages des Conditions Générales.
+            <!-- 1. CHAMP EMAIL (Fautes de frappe injectées + Backspace inversé + Focus Steal) -->
+            <div class="field">
+                <label>
+                    <span>Adresse e-mail du destinataire</span>
+                    <span class="label-hint">Requis</span>
                 </label>
-                <label style="cursor:pointer;">
-                    <input type="checkbox" id="cgu-2" onchange="handleCguTriangle(2)">
-                    Je certifie sur l'honneur ne pas avoir menti à la case précédente.
+                <input type="text" id="email-input" placeholder="exemple@domaine.fr" autocomplete="off" spellcheck="false">
+                <div class="field-error" id="email-error"></div>
+            </div>
+
+            <!-- 2. DATE DE NAISSANCE (Changement de format sadique) -->
+            <div class="field">
+                <label>
+                    <span>Date de naissance (Vérification 18+)</span>
+                    <span class="label-hint" id="dob-hint">Format : JJ / MM / AAAA</span>
                 </label>
-                <label style="cursor:pointer;">
-                    <input type="checkbox" id="cgu-3" onchange="handleCguTriangle(3)">
-                    J'accepte de recevoir des fax publicitaires à 3h du matin.
+                <input type="text" id="dob-input" placeholder="JJ / MM / AAAA" maxlength="10" autocomplete="off">
+                <div class="field-error" id="dob-error"></div>
+            </div>
+
+            <!-- 3. BOUTONS RADIO SOURNOIS (Échange Oui / Non) -->
+            <div class="field">
+                <label><span>Confirmez-vous être un robot automatisé ?</span></label>
+                <div class="radio-group" onmouseleave="swapRadioLabels()">
+                    <label class="radio-option" style="margin:0; font-weight:400;">
+                        <input type="radio" name="robot_check" value="yes" id="radio-a" onchange="onRadioPick()">
+                        <span id="label-a">Oui, je suis un robot</span>
+                    </label>
+                    <label class="radio-option" style="margin:0; font-weight:400;">
+                        <input type="radio" name="robot_check" value="no" id="radio-b" onchange="onRadioPick()">
+                        <span id="label-b">Non, je suis humain</span>
+                    </label>
+                </div>
+                <div class="field-error" id="radio-error">Vous avez coché "Oui, je suis un robot". L'accès est réservé aux humains.</div>
+            </div>
+
+            <!-- 4. VRAI-FAUX RECAPTCHA -->
+            <div class="recaptcha-box" id="rc-box">
+                <div class="rc-left">
+                    <div class="rc-checkbox" id="rc-check-btn" onclick="triggerRecaptcha()">
+                        <div class="rc-spinner" id="rc-spinner"></div>
+                        <span id="rc-checkmark" style="display:none; color:#16a34a; font-weight:bold; font-size:18px;">✓</span>
+                    </div>
+                    <span>Je ne suis pas un robot</span>
+                </div>
+                <div class="rc-logo">
+                    <span class="rc-logo-icon">🔄</span>
+                    reCAPTCHA<br><span style="font-size:8px; color:#888;">Confidentialité</span>
+                </div>
+            </div>
+
+            <!-- Grille 3x3 des feux de circulation -->
+            <div id="rc-challenge">
+                <div class="rc-header">
+                    Sélectionnez tous les carrés contenant
+                    <strong id="rc-target-word">des feux de circulation</strong>
+                    <span id="rc-sub-instruction" style="font-size:11px; opacity:0.9;">S'il n'y en a aucun, cliquez sur Ignorer.</span>
+                </div>
+                <div class="rc-grid" id="rc-grid"></div>
+                <div id="rc-error-msg" style="display:none; color:var(--danger); font-size:12px; padding:6px 12px; background:#fef2f2;"></div>
+                <div class="rc-footer">
+                    <div style="color:#666; font-size:16px; display:flex; gap:10px; cursor:pointer;">
+                        <span title="Recharger" onclick="buildCaptchaGrid()">↻</span>
+                        <span title="Indice" onclick="showToast('Indice sécurité : Regardez bien les pixels qui dépassent sur les cases voisines.')">ⓘ</span>
+                    </div>
+                    <button type="button" onclick="verifyCaptchaGrid()" style="background:#1a73e8; color:#fff; border:none; padding:8px 18px; border-radius:4px; font-weight:600; font-size:13px; cursor:pointer;">
+                        VALIDER
+                    </button>
+                </div>
+            </div>
+
+            <!-- 5. CGU AVEC CONTRÔLE DE VITESSE DE SCROLL -->
+            <div class="field">
+                <label>
+                    <span>Conditions d'utilisation du service</span>
+                    <span class="label-hint" id="scroll-status">Défilez jusqu'en bas pour activer</span>
                 </label>
+                <div class="terms-box" id="terms-box">
+                    <strong>Article 1 — Objet du service :</strong> SwiftDrop assure l'hébergement temporaire du fichier partagé.<br><br>
+                    <strong>Article 2 — Lecture attentive :</strong> L'utilisateur s'engage à lire ce texte à une vitesse humainement plausible (au moins 3 secondes de défilement continu sans coup brusque de molette).<br><br>
+                    <strong>Article 3 — Intégrité du curseur :</strong> Tout clic précipité ou signe d'énervement sur la souris pourra entraîner une revérification complète du formulaire.<br><br>
+                    <strong>Article 4 — Validation finale :</strong> Vous êtes arrivé en bas du document. Vous pouvez désormais cocher la case ci-dessous.
+                </div>
+                <label class="checkbox-row" style="font-weight:400; cursor:pointer;">
+                    <input type="checkbox" id="cgu-cb" disabled onchange="onCguCheck(this)">
+                    <span>J'ai lu attentivement et j'accepte les conditions de téléchargement.</span>
+                </label>
+                <div class="field-error" id="cgu-error"></div>
             </div>
 
-            <div id="lie-detector" style="display:none; background:#ffe3e3; color:var(--red); padding:10px; border-radius:6px; font-size:13px; margin-bottom:15px; font-weight:bold;">
-                🚨 Détecteur de mensonge : Vous avez coché la case 1 sans lire les CGU (temps passé : 0.0 seconde).
+            <!-- BANNIÈRE PIÈGE LAYOUT SHIFT (Pousse le bouton au moment du clic) -->
+            <div id="shift-banner">
+                ⚡ <strong>Serveur haute vitesse disponible :</strong> Votre connexion est éligible au téléchargement direct. Confirmez votre choix ci-dessous.
             </div>
 
-            <div style="position:relative; height:70px; display:flex; align-items:center; justify-content:center; border-top:1px solid #eee; padding-top:15px;">
-                <button type="button" id="submit-btn" 
-                    onmouseenter="evadeSubmit(this)" 
-                    onmousedown="startGentleClick(event)" 
-                    onmouseup="endGentleClick(event)"
-                    style="padding: 14px 28px; font-size: 16px; position:relative;">
-                    Envoyer mon dossier administratif 📨
-                </button>
-            </div>
-            <div id="click-force-msg" style="text-align:center; font-size:12px; color:#666; margin-top:5px;">
-                Astuce : Le bouton est timide, caressez-le en maintenant le clic entre 0.8 et 2.2 secondes.
-            </div>
-        </div>
-
-    </div>
-</div>
-
-<!-- ÉLÉMENTS FIXES (En dehors de #page-wrapper pour rester attachés à l'écran) -->
-
-<!-- Frein à main de défilement -->
-<div class="handbrake-panel">
-    <div style="font-size: 12px; font-weight: bold; margin-bottom: 4px;">FREIN À MAIN DE DÉFILEMENT</div>
-    <div style="font-size: 10px; color: #ccc;">Sécurité anti-scroll</div>
-    <div class="lever-box" onclick="toggleHandbrake()">
-        <div class="lever-handle" id="handbrake-handle">SERRÉ (BLOQUÉ)</div>
-    </div>
-    <button id="wedge-btn" onclick="toggleWedge()" style="width:100%; font-size:11px; background:#f77f00; border:none;">
-        📐 Mettre une cale
-    </button>
-</div>
-
-<!-- Gérard l'assistant flottant -->
-<div id="gerard-assistant">
-    <div class="gerard-avatar" onclick="pokeGerard()" title="Cliquez pour agacer Gérard">📎</div>
-    <div class="gerard-bubble">
-        <div class="gerard-name">Gérard — Inspecteur Ergonomique</div>
-        <div id="gerard-text">Bonjour ! Je vois que vous tentez d'utiliser cette page. Avez-vous pensé à desserrer le frein à main (à droite) avant de scroller ?</div>
-    </div>
-</div>
-
-<!-- Modal de Cookies Infernale -->
-<div id="cookie-modal">
-    <div class="cookie-box">
-        <h3 style="margin-top:0; color:var(--blue);">🍪 Gestion Obligatoire des Biscuits Numériques</h3>
-        <p style="font-size:14px; line-height:1.5; color:#444;">
-            Nous utilisons des cookies lourds (au beurre salé) pour ralentir votre curseur, juger vos fautes de frappe et revendre votre historique de clics à des éleveurs de lamas.
-        </p>
-        <div style="background:#f8f9fa; padding:10px; border-radius:6px; font-size:12px; margin-bottom:15px;">
-            <label><input type="checkbox" checked disabled> Cookies strictement inutiles mais obligatoires</label><br>
-            <label><input type="checkbox" checked id="cookie-spy"> Autoriser Gérard à commenter vos actions en direct</label>
-        </div>
-        <div class="cookie-actions">
-            <button type="button" class="secondary" id="refuse-cookie-btn" onmouseenter="runawayCookieBtn(this)" onclick="refuseCookies()">
-                Tout refuser (Non recommandé)
+            <!-- BOUTON PIÈGE QUI PREND LA PLACE DU VRAI BOUTON LORS DU DÉCALAGE -->
+            <button type="button" class="btn-danger-trap" id="trap-reset-btn" onclick="triggerAccidentalReset()">
+                Effacer mes informations et recommencer à zéro
             </button>
-            <button type="button" onclick="acceptCookies()">
-                Accepter avec enthousiasme ✨
+
+            <!-- VRAI BOUTON DE TÉLÉCHARGEMENT -->
+            <button type="button" class="btn-primary" id="download-btn" onmouseenter="prepareLayoutShift()" onclick="attemptSubmit()">
+                Télécharger le fichier (48,4 Mo)
+            </button>
+        </div>
+
+        <!-- ÉCRAN DE TÉLÉCHARGEMENT À 99% -->
+        <div id="download-screen">
+            <h3 style="margin:0 0 6px 0; font-size:17px;">Préparation de votre archive...</h3>
+            <p id="dl-subtext" style="margin:0; font-size:13px; color:var(--muted);">Déchiffrement des paquets en cours, veuillez ne pas bouger la souris.</p>
+            
+            <div class="progress-track">
+                <div class="progress-bar" id="dl-bar"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:12.5px; font-weight:600; color:#334155;">
+                <span id="dl-status">Connexion au serveur...</span>
+                <span id="dl-percent">0%</span>
+            </div>
+
+            <div id="dl-error-box" style="display:none; margin-top:18px; background:var(--danger-bg); border:1px solid #fecaca; color:var(--danger); padding:12px; border-radius:8px; font-size:12.5px; text-align:left;"></div>
+
+            <button type="button" id="dl-retry-btn" class="btn-primary" style="display:none; margin-top:14px;" onclick="startFakeDownload()">
+                Relancer le téléchargement
+            </button>
+        </div>
+    </div>
+</main>
+
+<!-- POP-UP QUI VOLE LE FOCUS PENDANT QU'ON ÉCRIT -->
+<div id="focus-steal-modal">
+    <div class="modal-card">
+        <h4 style="margin:0 0 8px 0; font-size:15px; color:var(--text);">🔔 Préférence de sécurité</h4>
+        <p style="margin:0 0 16px 0; font-size:13px; color:var(--muted); line-height:1.45;">
+            Vous tapez actuellement au clavier. Souhaitez-vous effacer le champ en cours pour activer la saisie assistée ?
+        </p>
+        <div style="display:flex; gap:10px; justify-content:flex-end;">
+            <button type="button" onclick="closeFocusModal(false)" style="background:#f1f5f9; color:#334155; border:1px solid #cbd5e1; padding:8px 14px; border-radius:6px; font-size:13px; cursor:pointer;">
+                Continuer normalement
+            </button>
+            <button type="button" id="focus-trap-btn" onclick="closeFocusModal(true)" style="background:var(--primary); color:#fff; border:none; padding:8px 14px; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer;">
+                Oui, vider ma saisie (Entrée)
             </button>
         </div>
     </div>
 </div>
 
-<!-- Menu Contextuel (Clic Droit) -->
-<div id="custom-context">
-    <div class="ctx-item" onclick="ctxAction('tax')"><span>Effectuer un clic droit</span> <strong>0,50 €</strong></div>
-    <div class="ctx-item" onclick="ctxAction('flip')"><span>Retourner la page à 180°</span> <span>🔄</span></div>
-    <div class="ctx-item" onclick="ctxAction('honk')"><span>Klaxonner d'agacement</span> <span>📯</span></div>
-    <div class="ctx-item" onclick="ctxAction('apologize')"><span>S'excuser auprès du serveur</span> <span>🙇</span></div>
-</div>
-
-<!-- Modal Finale : File d'attente immobile -->
-<div id="queue-modal">
-    <div class="ticket-box">
-        <h2 style="color:var(--blue); margin-top:0;">🎉 DOSSIER PRESQUE REÇU !</h2>
-        <p>Vous êtes placé en file d'attente prioritaire :</p>
-        <div style="font-size:42px; font-weight:900; color:var(--red); margin:15px 0;">
-            Position n° <span id="queue-pos">482</span>
-        </div>
-        <p style="font-size:13px; background:#fff3cd; padding:10px; border-radius:6px; color:#664d03;">
-            ⚠️ <strong>RÈGLE D'IMMOBILITÉ STRICTE :</strong> Ne bougez plus votre souris ! Tout mouvement de curseur est interprété comme une tentative de resquiller et vous fait reculer dans la file.
-        </p>
-        <div id="queue-warning" style="color:var(--red); font-weight:bold; min-height:20px; font-size:13px; margin-top:10px;"></div>
-        <button type="button" onclick="closeQueueModal()" style="margin-top:15px;">Abandonner ma place et revenir au formulaire</button>
-    </div>
-</div>
+<div id="toast"></div>
 
 <script>
-    /* ==========================================
-       1. SYNTHÉTISEUR AUDIO (Web Audio API)
-       ========================================== */
-    let audioCtx = null;
-    let soundEnabled = true;
-
-    function initAudio() {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
+    /* =========================================================
+       UTILITAIRES & TOASTS
+       ========================================================= */
+    let toastTimeout = null;
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.style.display = 'block';
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => { t.style.display = 'none'; }, 4000);
     }
 
-    function playSound(type) {
-        if (!soundEnabled) return;
-        try {
-            initAudio();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-
-            const now = audioCtx.currentTime;
-
-            if (type === 'boing') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(180, now);
-                osc.frequency.exponentialRampToValueAtTime(580, now + 0.18);
-                gain.gain.setValueAtTime(0.15, now);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
-                osc.start(now);
-                osc.stop(now + 0.2);
-            } else if (type === 'error') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(130, now);
-                osc.frequency.setValueAtTime(95, now + 0.12);
-                gain.gain.setValueAtTime(0.15, now);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.28);
-                osc.start(now);
-                osc.stop(now + 0.28);
-            } else if (type === 'pump') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(120, now);
-                osc.frequency.linearRampToValueAtTime(300, now + 0.1);
-                gain.gain.setValueAtTime(0.2, now);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
-                osc.start(now);
-                osc.stop(now + 0.12);
-            } else if (type === 'honk') {
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(240, now);
-                osc.frequency.setValueAtTime(310, now + 0.08);
-                gain.gain.setValueAtTime(0.2, now);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
-                osc.start(now);
-                osc.stop(now + 0.35);
-            }
-        } catch (e) {}
+    // Compteur de notifications qui augmente quand on veut l'effacer
+    let notifCount = 1;
+    function clickNotif() {
+        notifCount = notifCount * 2 + 1;
+        document.getElementById('notif-count').innerText = notifCount;
+        showToast(`Vous avez ${notifCount} alertes non lues. Cliquez à nouveau pour les masquer.`);
     }
 
-    function toggleAudio() {
-        soundEnabled = !soundEnabled;
-        document.getElementById('mute-btn').innerText = soundEnabled ? "🔔 Son : Activé" : "🔕 Son : Coupé (Gérard boude)";
-        gerardSay(soundEnabled ? "Ah ! Vous m'entendez à nouveau !" : "Vous m'avez coupé le sifflet, mais je continue de vous juger visuellement.");
-    }
-
-    /* ==========================================
-       2. ASSISTANT GÉRARD & QUOTA DE CLICS
-       ========================================== */
-    function gerardSay(msg) {
-        const box = document.getElementById('gerard-text');
-        box.style.opacity = 0;
-        setTimeout(() => {
-            box.innerText = msg;
-            box.style.opacity = 1;
-        }, 120);
-    }
-
-    function pokeGerard() {
-        playSound('honk');
-        const quotes = [
-            "Aïe ! Ne me touchez pas avec ce curseur non désinfecté !",
-            "Saviez-vous que 94% des utilisateurs abandonnent avant la case du téléphone ?",
-            "Vous cliquez avec beaucoup d'agressivité aujourd'hui.",
-            "Je suis payé au prorata du temps que vous perdez sur cette page."
-        ];
-        gerardSay(quotes[Math.floor(Math.random() * quotes.length)]);
-    }
-
-    let clickQuota = 25;
-    document.addEventListener('click', (e) => {
-        document.getElementById('custom-context').style.display = 'none';
-        clickQuota--;
-        const quotaEl = document.getElementById('click-quota');
-        quotaEl.innerText = clickQuota;
-
-        if (Math.abs(clickQuota) % 6 === 0) {
-            spawnFallingScrew(e.clientX, e.clientY);
-        }
-
-        if (clickQuota === 0) {
-            playSound('error');
-            gerardSay("⚠️ Vous avez épuisé votre forfait de 25 clics gratuits ! Les clics suivants seront facturés en karma.");
-        }
-    });
-
-    function spawnFallingScrew(x, y) {
-        const el = document.createElement('div');
-        el.className = 'falling-screw';
-        el.innerText = ['🔩', '⚙️', '📎', '🪫'][Math.floor(Math.random() * 4)];
-        el.style.left = x + 'px';
-        el.style.top = y + 'px';
-        document.body.appendChild(el);
-
-        requestAnimationFrame(() => {
-            el.style.top = (window.innerHeight + 50) + 'px';
-            el.style.transform = `rotate(${Math.random() * 720 - 360}deg)`;
-        });
-        setTimeout(() => el.remove(), 1100);
-    }
-
-    /* ==========================================
-       3. COOKIE MODAL INFERNALE
-       ========================================== */
-    let cookieRefuseTries = 0;
-    function runawayCookieBtn(btn) {
-        if (cookieRefuseTries < 4) {
-            cookieRefuseTries++;
-            playSound('boing');
-            const x = (Math.random() * 200) - 100;
-            const y = (Math.random() * 120) - 60;
-            btn.style.transform = `translate(${x}px, ${y}px)`;
-            const labels = [
-                "Oups, raté !",
-                "Vraiment refuser ?",
-                "Attention aux crampes !",
-                "Bon, d'accord, cliquez..."
-            ];
-            btn.innerText = labels[cookieRefuseTries - 1];
-        }
-    }
-
-    function refuseCookies() {
-        playSound('error');
-        alert("Erreur 418 : Le serveur de refus des cookies est actuellement en grève illimitée. Les cookies au beurre ont été acceptés par défaut.");
-        acceptCookies();
-    }
-
-    function acceptCookies() {
-        playSound('pump');
-        document.getElementById('cookie-modal').style.display = 'none';
-        gerardSay("Parfait, vos cookies sont au four ! Commencez par remplir votre identité (et surveillez votre niveau d'encre).");
-    }
-
-    /* ==========================================
-       4. FREIN À MAIN DE SCROLL & PENTE À 14%
-       ========================================== */
-    let handbrakeOn = true;
-    let wedgePlaced = false;
-    let lockedScrollY = 0;
-    let isForcingScroll = false;
-
-    function toggleHandbrake() {
-        handbrakeOn = !handbrakeOn;
-        const handle = document.getElementById('handbrake-handle');
-        if (handbrakeOn) {
-            lockedScrollY = window.scrollY;
-            handle.classList.remove('released');
-            handle.innerText = "SERRÉ (BLOQUÉ)";
-            playSound('pump');
-            gerardSay("Frein à main serré ! La page est immobilisée.");
-        } else {
-            handle.classList.add('released');
-            handle.innerText = "DESSERRÉ (LIBRE)";
-            playSound('boing');
-            gerardSay(wedgePlaced 
-                ? "Frein desserré ! Heureusement que vous avez mis la cale." 
-                : "Frein desserré ! Attention, la page est garée en côte, elle glisse vers le haut !");
-        }
-    }
-
-    function toggleWedge() {
-        wedgePlaced = !wedgePlaced;
-        const btn = document.getElementById('wedge-btn');
-        playSound('pump');
-        if (wedgePlaced) {
-            btn.innerText = "📐 Retirer la cale";
-            btn.style.background = "#2b9348";
-            gerardSay("Cale en bois installée sous la fenêtre ! La page ne glissera plus toute seule.");
-        } else {
-            btn.innerText = "📐 Mettre une cale";
-            btn.style.background = "#f77f00";
-            gerardSay("Vous avez retiré la cale ! Gare à la pente !");
-        }
-    }
-
-    window.addEventListener('scroll', () => {
-        if (isForcingScroll) return;
-
-        if (handbrakeOn && Math.abs(window.scrollY - lockedScrollY) > 5) {
-            isForcingScroll = true;
-            window.scrollTo(0, lockedScrollY);
-            const wrapper = document.getElementById('page-wrapper');
-            wrapper.classList.add('shake');
-            playSound('error');
-            gerardSay("🚨 ARRÊTEZ ! Vous essayez de scroller avec le frein à main serré (à droite) ! Vous allez brûler l'embrayage de la barre de défilement !");
-            setTimeout(() => {
-                wrapper.classList.remove('shake');
-                isForcingScroll = false;
-            }, 350);
-        }
-    });
-
-    // Effet de pente : si le frein est desserré et pas de cale, la page remonte toute seule
+    // Chronomètre stressant
+    let secondsLeft = 14 * 60 + 59;
     setInterval(() => {
-        if (!handbrakeOn && !wedgePlaced && window.scrollY > 0) {
-            isForcingScroll = true;
-            window.scrollBy(0, -3);
-            setTimeout(() => { isForcingScroll = false; }, 20);
-        }
-    }, 35);
+        secondsLeft = Math.max(0, secondsLeft - 1);
+        const m = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
+        const s = String(secondsLeft % 60).padStart(2, '0');
+        document.getElementById('timer-display').innerText = `${m}:${s}`;
+    }, 1000);
 
-    /* ==========================================
-       5. VOLUME = INCLINAISON DE LA PAGE
-       ========================================== */
-    const volSlider = document.getElementById('volume-slider');
-    volSlider.addEventListener('input', (e) => {
-        const val = e.target.value;
-        document.documentElement.style.setProperty('--tilt', val + 'deg');
-        document.getElementById('volume-label').innerText = val + '°';
-        gerardSay(`Ah oui, le curseur de volume règle l'inclinaison géométrique du site (${val}°). C'est une norme européenne.`);
+    /* =========================================================
+       1. CHAMP EMAIL : TYPOS FORCÉES, BACKSPACE INVERSÉ & VOL DE FOCUS
+       ========================================================= */
+    const emailInput = document.getElementById('email-input');
+    const emailError = document.getElementById('email-error');
+    let keystrokeCount = 0;
+    let focusStolenOnce = false;
+
+    // Bloquer le copier-coller
+    emailInput.addEventListener('paste', (e) => {
+        e.preventDefault();
+        emailError.style.display = 'block';
+        emailError.innerText = "Pour votre sécurité, le copier-coller est désactivé. Veuillez saisir votre adresse caractère par caractère.";
+        emailInput.classList.add('error-border');
     });
 
-    /* ==========================================
-       6. IDENTITÉ : POMPE À ENCRE & AUTOCORRECT
-       ========================================== */
-    let inkLevel = 100;
-    let autocorrectTimer = null;
-    const nameInput = document.getElementById('name-input');
+    emailInput.addEventListener('keydown', (e) => {
+        emailError.style.display = 'none';
+        emailInput.classList.remove('error-border');
 
-    nameInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' || e.key === 'Tab') return;
-
-        if (inkLevel <= 0) {
-            e.preventDefault();
-            playSound('error');
-            gerardSay("🖨️ Plus d'encre dans le clavier ! Pompez sur le bouton bleu à droite pour recharger le toner.");
+        // Piège 1 : Au 7ème caractère tapé, la pop-up vole le focus pendant que l'utilisateur tape !
+        if (!focusStolenOnce && emailInput.value.length === 7 && e.key.length === 1) {
+            focusStolenOnce = true;
+            const modal = document.getElementById('focus-steal-modal');
+            modal.style.display = 'flex';
+            // Donne le focus au bouton "Oui, vider ma saisie" pour que Espace/Entrée ou la frappe le déclenche
+            document.getElementById('focus-trap-btn').focus();
             return;
         }
 
-        inkLevel = Math.max(0, inkLevel - 16);
-        updateInkUI();
-
-        if (document.getElementById('anarchy-keys').checked && e.key.length === 1) {
-            e.preventDefault();
-            const drunkChars = "🤪🍷🫧?!§@#&éèçà";
-            nameInput.value += drunkChars[Math.floor(Math.random() * drunkChars.length)];
-        }
-
-        clearTimeout(autocorrectTimer);
-        if (document.getElementById('autocorrect-cb').checked) {
-            autocorrectTimer = setTimeout(applyTrollAutocorrect, 1100);
-        }
-    });
-
-    function updateInkUI() {
-        document.getElementById('ink-fill').style.width = inkLevel + '%';
-        const opacity = Math.max(0.12, inkLevel / 100);
-        document.documentElement.style.setProperty('--ink-opacity', opacity);
-    }
-
-    function pumpInk() {
-        inkLevel = Math.min(100, inkLevel + 35);
-        updateInkUI();
-        playSound('pump');
-        gerardSay("Pschht ! Pression d'encre rétablie à " + inkLevel + "%.");
-    }
-
-    function applyTrollAutocorrect() {
-        const val = nameInput.value.trim();
-        if (val.length < 3 || val.includes("dit «")) return;
-        const titles = [
-            "dit « Le Sanglier des Ardennes »",
-            "(Sous tutelle ergonomique)",
-            "Junior-Senior III",
-            "de la Compta",
-            "— Fan de Céline Dion"
-        ];
-        const chosen = titles[Math.floor(Math.random() * titles.length)];
-        nameInput.value = val + " " + chosen;
-        playSound('boing');
-        gerardSay("✨ Correction Orthographique IA : Votre nom manquait de panache, nous l'avons enrichi.");
-    }
-
-    function toggleAutocorrect(cb) {
-        if (!cb.checked) {
-            gerardSay("Vous désactivez l'IA ? Dommage, elle voulait vous appeler 'Jean-Barnabé du Cosmos'.");
-        }
-    }
-
-    /* ==========================================
-       7. ANNÉE DE NAISSANCE PAR ORDRE ALPHABÉTIQUE
-       ========================================== */
-    function numberToFrenchWords(year) {
-        const units = ["", "un", "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf", "dix", "onze", "douze", "treize", "quatorze", "quinze", "seize", "dix-sept", "dix-huit", "dix-neuf"];
-        const tens = ["", "", "vingt", "trente", "quarante", "cinquante", "soixante", "soixante", "quatre-vingt", "quatre-vingt"];
-
-        function convertTwoDigits(n) {
-            if (n === 0) return "";
-            if (n < 20) return units[n];
-            const t = Math.floor(n / 10);
-            const u = n % 10;
-            if (t === 7 || t === 9) {
-                const rem = 10 + u;
-                const sep = (t === 7 && u === 1) ? " et " : "-";
-                return tens[t] + sep + units[rem];
-            } else {
-                const sep = (u === 1 && t !== 8) ? " et " : (u > 0 ? "-" : "");
-                const plural = (t === 8 && u === 0) ? "s" : "";
-                return tens[t] + plural + sep + units[u];
+        // Piège 2 : La touche Backspace recule le curseur d'un cran avant d'effacer (décale tout)
+        if (e.key === 'Backspace' && emailInput.selectionStart > 1) {
+            const pos = emailInput.selectionStart;
+            // 60% du temps, efface la mauvaise lettre juste à côté
+            if (Math.random() < 0.6) {
+                e.preventDefault();
+                const v = emailInput.value;
+                emailInput.value = v.slice(0, pos - 2) + v.slice(pos - 1);
+                emailInput.setSelectionRange(pos - 1, pos - 1);
+                return;
             }
         }
 
-        if (year >= 2000) {
-            const rem = year - 2000;
-            return ("Deux mille " + convertTwoDigits(rem)).trim();
-        } else {
-            const rem = year - 1900;
-            return ("Mille neuf cent " + convertTwoDigits(rem)).trim();
+        // Piège 3 : Toutes les 6 lettres, inverse discrètement les 2 dernières lettres tapées
+        if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+            keystrokeCount++;
+            if (keystrokeCount % 6 === 0 && emailInput.value.length >= 2) {
+                setTimeout(() => {
+                    const v = emailInput.value;
+                    const len = v.length;
+                    // Échange les deux derniers caractères
+                    emailInput.value = v.slice(0, len - 2) + v[len - 1] + v[len - 2];
+                }, 10);
+            }
+        }
+    });
+
+    function closeFocusModal(clearField) {
+        document.getElementById('focus-steal-modal').style.display = 'none';
+        if (clearField) {
+            emailInput.value = '';
+            showToast("Saisie réinitialisée selon votre choix.");
+        }
+        emailInput.focus();
+    }
+
+    /* =========================================================
+       2. DATE DE NAISSANCE QUI CHANGE DE FORMAT EN COURS DE ROUTE
+       ========================================================= */
+    const dobInput = document.getElementById('dob-input');
+    const dobError = document.getElementById('dob-error');
+    const dobHint = document.getElementById('dob-hint');
+    let dobStage = 0; // 0 = demande JJ/MM/AAAA, puis exige MM/AAAA/JJ, puis AAAA-JJ-MM
+
+    dobInput.addEventListener('input', (e) => {
+        dobError.style.display = 'none';
+        dobInput.classList.remove('error-border');
+
+        const val = dobInput.value.trim();
+        if (val.length === 10) {
+            if (dobStage === 0) {
+                dobStage = 1;
+                dobInput.value = '';
+                dobInput.placeholder = 'MM / AAAA / JJ';
+                dobHint.innerText = 'Format : MM / AAAA / JJ';
+                dobInput.classList.add('error-border');
+                dobError.style.display = 'block';
+                dobError.innerText = "Erreur de norme régionale : veuillez saisir votre date au format international MM/AAAA/JJ (ex: 08/1998/24).";
+            } else if (dobStage === 1 && !/^\d{2}\/\d{4}\/\d{2}$/.test(val)) {
+                dobInput.value = '';
+                dobInput.classList.add('error-border');
+                dobError.style.display = 'block';
+                dobError.innerText = "Format incorrect : respectez strictement MM/AAAA/JJ avec les barres obliques (ex: 05/1995/19).";
+            }
+        }
+    });
+
+    /* =========================================================
+       3. BOUTONS RADIO QUI S'ÉCHANGENT QUAND ON QUITTE LA ZONE
+       ========================================================= */
+    let swappedOnce = false;
+    let isCurrentlySwapped = false;
+
+    function onRadioPick() {
+        document.getElementById('radio-error').style.display = 'none';
+    }
+
+    function swapRadioLabels() {
+        const radioA = document.getElementById('radio-a');
+        const radioB = document.getElementById('radio-b');
+        const labelA = document.getElementById('label-a');
+        const labelB = document.getElementById('label-b');
+
+        // Si l'utilisateur a coché "Non, je suis humain" et sort sa souris, on échange les textes !
+        if (!swappedOnce && ((radioB.checked && !isCurrentlySwapped) || (radioA.checked && isCurrentlySwapped))) {
+            swappedOnce = true;
+            isCurrentlySwapped = !isCurrentlySwapped;
+            labelA.innerText = "Non, je suis humain";
+            labelB.innerText = "Oui, je suis un robot";
+            radioA.value = "no";
+            radioB.value = "yes";
+            document.getElementById('radio-error').style.display = 'block';
         }
     }
 
-    function populateBirthYears() {
-        const select = document.getElementById('birth-year');
-        const list = [];
-        for (let y = 1945; y <= 2025; y++) {
-            list.push({ num: y, text: numberToFrenchWords(y) });
-        }
-        list.sort((a, b) => a.text.localeCompare(b.text, 'fr'));
+    /* =========================================================
+       4. LE VRAI-FAUX RECAPTCHA (FEUX DE CIRCULATION + 2 PIXELS)
+       ========================================================= */
+    let captchaSolved = false;
+    let captchaAttempts = 0;
 
-        list.forEach(item => {
-            const opt = document.createElement('option');
-            opt.value = item.num;
-            opt.textContent = item.text;
-            select.appendChild(opt);
+    function triggerRecaptcha() {
+        if (captchaSolved) return;
+        const spinner = document.getElementById('rc-spinner');
+        spinner.style.display = 'block';
+        setTimeout(() => {
+            spinner.style.display = 'none';
+            document.getElementById('rc-challenge').style.display = 'block';
+            buildCaptchaGrid();
+        }, 700);
+    }
+
+    function buildCaptchaGrid() {
+        const grid = document.getElementById('rc-grid');
+        grid.innerHTML = '';
+        document.getElementById('rc-error-msg').style.display = 'none';
+
+        // Dessin SVG d'une scène urbaine découpée en 9 cases :
+        // Cases 1 et 4 ont le gros feu tricolore, mais la case 0 (en haut à gauche) a 3 pixels du boîtier jaune qui dépassent !
+        const tilesData = [
+            // 0: Ciel + 3 pixels du feu qui dépassent à droite !
+            `<svg viewBox="0 0 100 100"><rect width="100" height="100" fill="#bae6fd"/><rect x="95" y="25" width="5" height="45" fill="#eab308"/><circle cx="30" cy="30" r="14" fill="#fff" opacity="0.8"/></svg>`,
+            // 1: Le feu tricolore principal (haut)
+            `<svg viewBox="0 0 100 100"><rect width="100" height="100" fill="#bae6fd"/><rect x="0" y="20" width="48" height="80" rx="4" fill="#eab308"/><rect x="6" y="24" width="36" height="72" fill="#1e293b"/><circle cx="24" cy="40" r="11" fill="#ef4444"/><circle cx="24" cy="68" r="11" fill="#f59e0b"/></svg>`,
+            // 2: Ciel + Immeuble
+            `<svg viewBox="0 0 100 100"><rect width="100" height="100" fill="#bae6fd"/><rect x="35" y="30" width="65" height="70" fill="#94a3b8"/></svg>`,
+            // 3: Ciel + 2 pixels de la barre métallique à droite
+            `<svg viewBox="0 0 100 100"><rect width="100" height="100" fill="#cbd5e1"/><rect x="97" y="0" width="3" height="100" fill="#475569"/></svg>`,
+            // 4: Bas du feu tricolore (feu vert) + poteau
+            `<svg viewBox="0 0 100 100"><rect width="100" height="100" fill="#cbd5e1"/><rect x="0" y="0" width="48" height="32" fill="#eab308"/><circle cx="24" cy="14" r="11" fill="#22c55e"/><rect x="19" y="32" width="10" height="68" fill="#475569"/></svg>`,
+            // 5: Immeuble + Arbre
+            `<svg viewBox="0 0 100 100"><rect width="100" height="100" fill="#94a3b8"/><circle cx="30" cy="75" r="28" fill="#16a34a"/></svg>`,
+            // 6: Route + Passage piéton
+            `<svg viewBox="0 0 100 100"><rect width="100" height="100" fill="#475569"/><rect x="15" y="45" width="70" height="14" fill="#f8fafc"/><rect x="15" y="72" width="70" height="14" fill="#f8fafc"/></svg>`,
+            // 7: Route + Pied du poteau du feu
+            `<svg viewBox="0 0 100 100"><rect width="100" height="100" fill="#475569"/><rect x="19" y="0" width="10" height="45" fill="#334155"/><rect x="45" y="45" width="45" height="14" fill="#f8fafc"/></svg>`,
+            // 8: Route + Voiture floue
+            `<svg viewBox="0 0 100 100"><rect width="100" height="100" fill="#475569"/><rect x="20" y="25" width="60" height="35" rx="6" fill="#dc2626"/></svg>`
+        ];
+
+        tilesData.forEach((svg, idx) => {
+            const tile = document.createElement('div');
+            tile.className = 'rc-tile';
+            tile.dataset.idx = idx;
+            tile.innerHTML = svg;
+            tile.onclick = () => {
+                // Au 2ème essai, cliquer déclenche le fondu ultra-lent de 3.4 secondes de Google !
+                if (captchaAttempts === 1 && !tile.classList.contains('selected') && (idx === 1 || idx === 4)) {
+                    tile.classList.add('fading');
+                    setTimeout(() => {
+                        tile.classList.remove('fading');
+                        tile.classList.toggle('selected');
+                    }, 3400);
+                } else {
+                    tile.classList.toggle('selected');
+                }
+            };
+            grid.appendChild(tile);
         });
     }
-    populateBirthYears();
 
-    function onYearChange(sel) {
-        if (sel.value) {
-            playSound('boing');
-            gerardSay(`Vous êtes né en ${sel.value} ? Je vous aurais donné au moins 12 ans de plus vu la vitesse de votre souris.`);
-        }
-    }
+    function verifyCaptchaGrid() {
+        const selected = Array.from(document.querySelectorAll('.rc-tile.selected')).map(el => parseInt(el.dataset.idx));
+        const errBox = document.getElementById('rc-error-msg');
+        errBox.style.display = 'block';
 
-    /* ==========================================
-       8. TÉLÉPHONE ÉOLIEN (VENT SUR LE SLIDER)
-       ========================================== */
-    let windowOpen = true;
-    const phoneSlider = document.getElementById('phone-slider');
-
-    function formatPhone(num) {
-        const str = "0" + num.toString();
-        return str.replace(/(\d{2})(?=\d)/g, "$1 ");
-    }
-
-    function updatePhoneFromSlider() {
-        document.getElementById('phone-display').innerText = formatPhone(phoneSlider.value);
-    }
-
-    function blowOnPhone(delta) {
-        playSound('pump');
-        phoneSlider.value = parseInt(phoneSlider.value) + delta;
-        updatePhoneFromSlider();
-    }
-
-    function toggleWindow() {
-        windowOpen = !windowOpen;
-        const status = document.getElementById('window-status');
-        const btn = document.getElementById('window-btn');
-        playSound('boing');
-        if (windowOpen) {
-            status.innerText = "🪟 Fenêtre ouverte (Courant d'air !)";
-            status.style.color = "var(--red)";
-            btn.innerText = "Fermer la fenêtre 🪟";
-            gerardSay("Vous avez rouvert la fenêtre ! Le vent recommence à pousser votre numéro de téléphone.");
-        } else {
-            status.innerText = "🔒 Fenêtre fermée (Calme plat)";
-            status.style.color = "#2b9348";
-            btn.innerText = "Ouvrir la fenêtre pour aérer 🪟";
-            gerardSay("Fenêtre fermée ! Votre numéro de téléphone est désormais à l'abri des courants d'air.");
-        }
-    }
-
-    setInterval(() => {
-        if (windowOpen) {
-            phoneSlider.value = parseInt(phoneSlider.value) + 247;
-            updatePhoneFromSlider();
-        }
-    }, 180);
-
-    /* ==========================================
-       9. MOT DE PASSE & AFFICHAGE GÉANT
-       ========================================== */
-    function checkPassword(val) {
-        const billboard = document.getElementById('password-billboard');
-        const billboardText = document.getElementById('billboard-text');
-
-        if (val.length > 0) {
-            billboard.style.display = 'block';
-            billboardText.innerText = val;
-        } else {
-            billboard.style.display = 'none';
+        if (selected.length === 0) {
+            errBox.innerText = "Veuillez sélectionner au moins un carré contenant un feu de circulation.";
+            return;
         }
 
-        document.getElementById('pwd-len').innerText = val.length;
+        captchaAttempts++;
 
-        const r1 = /[AEIOUY]/.test(val);
-        setRuleState('rule-1', r1);
-
-        const r2 = /(moutarde|angoisse|lundi|impots|caf|gerard)/i.test(val);
-        setRuleState('rule-2', r2);
-
-        const r3 = /(\.\.\.|!|\?)/.test(val);
-        setRuleState('rule-3', r3);
-
-        const r4 = val.length > 0 && (val.length % 2 === 1);
-        setRuleState('rule-4', r4);
-    }
-
-    function setRuleState(id, valid) {
-        const el = document.getElementById(id);
-        el.className = valid ? 'valid' : 'invalid';
-    }
-
-    /* ==========================================
-       10. CAPTCHA PSYCHOLOGIQUE
-       ========================================== */
-    function selectCaptcha(el, isCorrect) {
-        el.classList.toggle('selected');
-        if (!isCorrect && el.classList.contains('selected')) {
-            playSound('error');
-            gerardSay("Erreur d'empathie : Cet emoji déborde d'assurance, regardez son sourire arrogant !");
-        } else if (isCorrect && el.classList.contains('selected')) {
-            playSound('boing');
-            gerardSay("Bien vu ! Celui-ci est clairement au bord du burn-out.");
-        }
-    }
-
-    let captchaFleeCount = 0;
-    function fleeCaptcha(el) {
-        if (captchaFleeCount < 3) {
-            captchaFleeCount++;
-            playSound('boing');
-            const x = (Math.random() * 80) - 40;
-            const y = (Math.random() * 50) - 25;
-            el.style.transform = `translate(${x}px, ${y}px)`;
-        }
-    }
-
-    /* ==========================================
-       11. TRIANGLE DES CGU & BOUTON FINAL
-       ========================================== */
-    function handleCguTriangle(num) {
-        const c1 = document.getElementById('cgu-1');
-        const c2 = document.getElementById('cgu-2');
-        const c3 = document.getElementById('cgu-3');
-        const lieBox = document.getElementById('lie-detector');
-
-        if (num === 1 && c1.checked) {
-            lieBox.style.display = 'block';
-            playSound('error');
+        if (captchaAttempts === 1) {
+            if (!selected.includes(0)) {
+                errBox.innerText = "Échec : Vous avez oublié les 3 pixels du boîtier jaune qui dépassent dans la case en haut à gauche.";
+            } else {
+                errBox.innerText = "Échec : La case en haut à gauche ne contient que 3 pixels du boîtier, pas l'ampoule du feu. Veuillez réessayer.";
+            }
+            buildCaptchaGrid();
+            return;
         }
 
-        if (c1.checked && c2.checked && c3.checked) {
-            playSound('boing');
-            if (num === 1) c3.checked = false;
-            else if (num === 2) c1.checked = false;
-            else c2.checked = false;
-            gerardSay("⚖️ Paradoxe juridique : La loi interdit de cocher ces 3 cases simultanément. Choisissez vos 2 préférées !");
+        if (captchaAttempts === 2) {
+            if (selected.includes(7)) {
+                errBox.innerText = "Presque : Le poteau métallique (case du bas) ne fait pas juridiquement partie du feu tricolore. Encore un effort.";
+            } else {
+                errBox.innerText = "Doute de sécurité : Cliquez à nouveau (attention, le rechargement lent des images est activé).";
+            }
+            buildCaptchaGrid();
+            return;
         }
+
+        // 3ème essai : ça passe enfin !
+        captchaSolved = true;
+        document.getElementById('rc-challenge').style.display = 'none';
+        document.getElementById('rc-checkmark').style.display = 'block';
+        showToast("Vérification reCAPTCHA validée.");
     }
 
-    let submitEvades = 0;
-    function evadeSubmit(btn) {
-        if (submitEvades < 2) {
-            submitEvades++;
-            playSound('boing');
-            const offset = submitEvades % 2 === 0 ? -130 : 130;
-            btn.style.transform = `translateX(${offset}px)`;
-            gerardSay("Oups ! Le bouton d'envoi a eu un mouvement de recul. Approchez-vous plus doucement !");
-        } else {
-            btn.style.transform = `translateX(0px)`;
+    /* =========================================================
+       5. CGU AVEC RADAR DE VITESSE DE DÉFILEMENT
+       ========================================================= */
+    const termsBox = document.getElementById('terms-box');
+    const cguCb = document.getElementById('cgu-cb');
+    const cguError = document.getElementById('cgu-error');
+    const scrollStatus = document.getElementById('scroll-status');
+    let lastScrollTop = 0;
+    let lastScrollTime = Date.now();
+
+    termsBox.addEventListener('scroll', () => {
+        const now = Date.now();
+        const dt = Math.max(1, now - lastScrollTime);
+        const dy = Math.abs(termsBox.scrollTop - lastScrollTop);
+        const speed = dy / dt; // px par ms
+
+        lastScrollTop = termsBox.scrollTop;
+        lastScrollTime = now;
+
+        // Si l'utilisateur donne un coup de molette rapide (> 1.1 px/ms)
+        if (speed > 1.1 && termsBox.scrollTop > 25) {
+            termsBox.scrollTop = 0;
+            cguCb.disabled = true;
+            cguCb.checked = false;
+            cguError.style.display = 'block';
+            cguError.innerText = "Défilement trop rapide détecté : Vous n'avez pas pu lire l'Article 2 à cette vitesse. Veuillez défiler doucement.";
+            return;
         }
-    }
 
-    let pressStartTime = 0;
-    function startGentleClick(e) {
-        pressStartTime = Date.now();
-        document.getElementById('click-force-msg').innerText = "⏳ Maintenez doucement... Pas trop vite, pas trop longtemps...";
-    }
-
-    function endGentleClick(e) {
-        const duration = (Date.now() - pressStartTime) / 1000;
-        const msg = document.getElementById('click-force-msg');
-
-        if (duration < 0.7) {
-            playSound('error');
-            msg.innerHTML = `<strong style="color:var(--red)">❌ Clic trop brutal (${duration.toFixed(2)}s) !</strong> Vous avez brusqué le bouton. Maintenez entre 0.8s et 2.2s.`;
-            gerardSay("Plus doucement ! C'est un formulaire administratif, pas un marteau-piqueur !");
-        } else if (duration > 2.5) {
-            playSound('error');
-            msg.innerHTML = `<strong style="color:var(--red)">❌ Clic trop mou (${duration.toFixed(2)}s) !</strong> Vous vous êtes endormi sur la souris.`;
-        } else {
-            playSound('honk');
-            openQueueModal();
-        }
-    }
-
-    /* ==========================================
-       12. MENU CLIC DROIT & FILE D'ATTENTE
-       ========================================== */
-    document.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        playSound('boing');
-        const menu = document.getElementById('custom-context');
-        menu.style.display = 'block';
-        menu.style.left = Math.min(e.clientX, window.innerWidth - 250) + 'px';
-        menu.style.top = Math.min(e.clientY, window.innerHeight - 160) + 'px';
-    });
-
-    let isFlipped = false;
-    function ctxAction(act) {
-        if (act === 'tax') {
-            alert("Merci ! 0,50 € ont été débités de votre forfait moral pour ce clic droit.");
-        } else if (act === 'flip') {
-            isFlipped = !isFlipped;
-            document.documentElement.style.setProperty('--tilt', isFlipped ? '180deg' : '0deg');
-        } else if (act === 'honk') {
-            playSound('honk');
-            gerardSay("📯 POUET ! Oui, ça soulage, n'est-ce pas ?");
-        } else if (act === 'apologize') {
-            gerardSay("Le serveur accepte vos excuses, mais reste sur ses gardes.");
-        }
-    }
-
-    let queueActive = false;
-    let queuePos = 482;
-
-    function openQueueModal() {
-        queueActive = true;
-        queuePos = 482;
-        document.getElementById('queue-pos').innerText = queuePos;
-        document.getElementById('queue-modal').style.display = 'flex';
-    }
-
-    function closeQueueModal() {
-        queueActive = false;
-        document.getElementById('queue-modal').style.display = 'none';
-        gerardSay("Vous avez quitté la file d'attente ! Il ne vous restait pourtant que 47 heures à patienter.");
-    }
-
-    document.addEventListener('mousemove', () => {
-        if (queueActive) {
-            queuePos += 3;
-            document.getElementById('queue-pos').innerText = queuePos;
-            document.getElementById('queue-warning').innerText = "🚨 MOUVEMENT DE SOURIS DÉTECTÉ ! Pénalité : +3 places !";
+        // Arrivé en bas doucement
+        if (termsBox.scrollTop + termsBox.clientHeight >= termsBox.scrollHeight - 6) {
+            cguCb.disabled = false;
+            scrollStatus.innerText = "Lecture validée ✓";
+            scrollStatus.style.color = "var(--success)";
+            cguError.style.display = 'none';
         }
     });
+
+    function onCguCheck(cb) {
+        // La première fois qu'on coche la case, elle se décoche 350ms plus tard ("clic décentré")
+        if (cb.checked && !cb.dataset.retried) {
+            cb.dataset.retried = "true";
+            setTimeout(() => {
+                cb.checked = false;
+                cguError.style.display = 'block';
+                cguError.innerText = "Clic imprécis : Vous avez cliqué à 2px du centre de la case. Veuillez recocher.";
+            }, 350);
+        } else {
+            cguError.style.display = 'none';
+        }
+    }
+
+    /* =========================================================
+       6. LE PIÈGE DU "LAYOUT SHIFT" AU MOMENT DE CLIQUER SUR TÉLÉCHARGER
+       ========================================================= */
+    let layoutShiftedCount = 0;
+
+    function prepareLayoutShift() {
+        // Dès que l'utilisateur approche sa souris du bouton Télécharger après avoir rempli des champs,
+        // avec un léger délai de 160ms (pile quand son doigt appuie sur le clic gauche !),
+        // la bannière et le bouton "Effacer tout" s'insèrent et poussent le bouton Télécharger vers le bas !
+        if (layoutShiftedCount < 1 && emailInput.value.length > 3) {
+            layoutShiftedCount++;
+            setTimeout(() => {
+                document.getElementById('shift-banner').style.display = 'block';
+                document.getElementById('trap-reset-btn').style.display = 'block';
+            }, 140);
+        }
+    }
+
+    function triggerAccidentalReset() {
+        // Si l'utilisateur s'est fait avoir par le décalage et a cliqué sur le bouton piège :
+        document.getElementById('cgu-cb').checked = false;
+        showToast("Oups ! La bannière de serveur a décalé la page au moment de votre clic. Re-cochez simplement les CGU.");
+        document.getElementById('trap-reset-btn').style.display = 'none';
+    }
+
+    /* =========================================================
+       7. VALIDATION FINALE & TÉLÉCHARGEMENT À 99%
+       ========================================================= */
+    function attemptSubmit() {
+        // Vérification email
+        if (!emailInput.value.includes('@') || emailInput.value.length < 5) {
+            emailError.style.display = 'block';
+            emailError.innerText = "Veuillez saisir une adresse e-mail valide (vérifiez qu'aucune lettre n'a été inversée).";
+            emailInput.classList.add('error-border');
+            return;
+        }
+
+        // Vérification date
+        if (dobInput.value.length < 8) {
+            dobError.style.display = 'block';
+            dobError.innerText = "Veuillez compléter votre date de naissance au format demandé.";
+            dobInput.classList.add('error-border');
+            return;
+        }
+
+        // Vérification radio
+        const radioNo = document.querySelector('input[name="robot_check"][value="no"]');
+        if (!radioNo || !radioNo.checked) {
+            document.getElementById('radio-error').style.display = 'block';
+            return;
+        }
+
+        // Vérification reCAPTCHA
+        if (!captchaSolved) {
+            showToast("Veuillez valider la case 'Je ne suis pas un robot'.");
+            return;
+        }
+
+        // Vérification CGU
+        if (!cguCb.checked) {
+            cguError.style.display = 'block';
+            cguError.innerText = "Veuillez faire défiler et accepter les conditions d'utilisation.";
+            return;
+        }
+
+        // Tout est validé -> Lance l'écran de téléchargement à 99% !
+        document.getElementById('form-screen').style.display = 'none';
+        document.getElementById('download-screen').style.display = 'block';
+        startFakeDownload();
+    }
+
+    let dlInterval = null;
+    let dlProgress = 0;
+    let mouseMovedAt99 = false;
+
+    function startFakeDownload() {
+        dlProgress = 0;
+        mouseMovedAt99 = false;
+        document.getElementById('dl-error-box').style.display = 'none';
+        document.getElementById('dl-retry-btn').style.display = 'none';
+        const bar = document.getElementById('dl-bar');
+        const pct = document.getElementById('dl-percent');
+        const status = document.getElementById('dl-status');
+
+        clearInterval(dlInterval);
+        dlInterval = setInterval(() => {
+            if (dlProgress < 85) {
+                dlProgress += Math.floor(Math.random() * 14) + 5;
+                status.innerText = "Téléchargement des blocs...";
+            } else if (dlProgress < 98) {
+                dlProgress += 1;
+                status.innerText = "Vérification de la somme de contrôle...";
+            } else if (dlProgress === 98) {
+                dlProgress = 99;
+                status.innerText = "Finalisation (99%) — Ne touchez plus à la souris...";
+            } else if (dlProgress === 99) {
+                // Reste bloqué à 99% puis recule à 76% ou échoue au moindre mouvement de souris !
+                setTimeout(() => {
+                    if (dlProgress === 99) {
+                        clearInterval(dlInterval);
+                        bar.style.width = '12%';
+                        pct.innerText = '12%';
+                        status.innerText = 'Téléchargement interrompu';
+                        const err = document.getElementById('dl-error-box');
+                        err.style.display = 'block';
+                        err.innerHTML = `<strong>Erreur réseau 0x800421 :</strong> Un micro-mouvement du curseur de la souris a perturbé l'assemblage du dernier octet à 99%. Veuillez relancer et garder la souris strictement immobile.`;
+                        document.getElementById('dl-retry-btn').style.display = 'block';
+                    }
+                }, 2200);
+            }
+
+            dlProgress = Math.min(99, dlProgress);
+            bar.style.width = dlProgress + '%';
+            pct.innerText = dlProgress + '%';
+        }, 260);
+    }
 </script>
 
 </body>
